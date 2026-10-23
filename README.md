@@ -73,3 +73,7 @@ Testy w Chromium/Playwright: kalkulator (15/30 dni, zakres, grosze, niepoprawne 
 `python3 scripts/update_prices.py` pobiera publiczne ceny przez curl z weryfikacją TLS i zapisuje zweryfikowany snapshot `prices-snapshot.json` oraz wiersze tabeli w HTML. Następnie `python3 scripts/export.py` generuje samodzielny plik. Dzięki temu cennik jest widoczny także przy zablokowanym JS lub błędzie sieci. Statyczne ceny mają datę i nie są przedstawiane jako potwierdzone aktualne; działający JS nadal odświeża je z panelu. W razie zmiany cen dla wersji bez JS odśwież snapshot przed wdrożeniem.
 
 Kontakt zawiera osobne przyciski WhatsApp i „Zadzwoń” (`tel:+48601775146`). Usunięto ze strony notatkę o kalkulacji według sezam.com.pl na prośbę właściciela.
+
+## Zdjęcia poglądowe
+
+Artykuły blogowe i sekcja przyjmowanych przedmiotów mają zdjęcia nagłówkowe. Dodatkowy kadr prezentuje wycenę biżuterii. Grafiki w `assets/blog-*.webp` oraz `assets/wycena-bizuterii.webp` są wygenerowanymi fotorealistycznymi ilustracjami, nie dokumentują lokalu, pracowników ani produktów firmy. Obrazy mają teksty alternatywne i leniwe ładowanie.
