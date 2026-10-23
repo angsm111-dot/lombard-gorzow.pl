@@ -56,7 +56,7 @@ Testy w Chromium/Playwright: kalkulator (15/30 dni, zakres, grosze, niepoprawne 
 ## Do zrobienia przed publikacją
 
 1. Potwierdzić bezpośredni odczyt cen w przeglądarce po wdrożeniu na JDM.
-2. Uzupełnić adres firmy i godziny otwarcia.
+2. Uzupełnić godziny otwarcia. Adres z sezam.com.pl: ul. Pocztowa 11, 66-400 Gorzów Wielkopolski.
 3. Podłączyć obsługę formularza wyceny i informacje o przetwarzaniu danych. Obecnie formularz jest demonstracyjny i nie wysyła danych.
 4. W razie potrzeby potwierdzić profil OLX: https://www.olx.pl/oferty/uzytkownik/G2XGE/ pochodzi z https://sezam.com.pl/oferta-olx-allegro/. Właściciel odłożył podanie linku na później.
 5. Sprawdzić wersję mobilną — właściciel prosił na razie o skupienie się na komputerowej.
