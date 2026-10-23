@@ -28,7 +28,7 @@ async function refreshGoldPrices() {
   pricesLoading = true;
   refreshPricesButton.disabled = true;
   priceBody.setAttribute('aria-busy', 'true');
-  priceStatus.textContent = 'Pobieranie aktualnego cennika…';
+  priceStatus.textContent = priceBody.dataset.hasPrices === 'true' ? 'Odświeżanie cen… Ostatnie notowania: ' + priceBody.dataset.snapshotDate + '.' : 'Pobieranie aktualnego cennika…';
   try {
     const response = await fetch(GOLD_PRICES_URL, {
       mode: 'cors', credentials: 'omit', cache: 'no-store',
@@ -59,16 +59,21 @@ async function refreshGoldPrices() {
       return row;
     });
     priceBody.replaceChildren(...rows);
+    priceBody.dataset.hasPrices = 'true';
     const fetchedAt = new Date(data.fetchedAt);
     const marketDate = Number.isFinite(fetchedAt.getTime())
       ? ' · Notowania: ' + new Intl.DateTimeFormat('pl-PL', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Warsaw' }).format(fetchedAt)
       : '';
+    priceBody.dataset.snapshotDate = Number.isFinite(fetchedAt.getTime()) ? new Intl.DateTimeFormat('pl-PL', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Warsaw' }).format(fetchedAt) : 'data niepodana';
     priceStatus.textContent = 'Ceny skupu z panelu SEZAM · PLN za 1 g' + marketDate + '. Odświeżanie co minutę.';
     priceStatus.dataset.state = 'ready';
   } catch {
-    // Nie pozostawiamy nieaktualnych stawek i nie zastępujemy ich cenami rynkowymi.
-    showPriceMessage('Ceny chwilowo niedostępne');
-    priceStatus.textContent = 'Nie można pobrać aktualnego cennika. Odśwież lub zapytaj nas o cenę przez WhatsApp.';
+    if (priceBody.dataset.hasPrices === 'true') {
+      priceStatus.textContent = 'Nie potwierdzono aktualności cen. Pokazujemy ostatnio pobrany cennik · notowania: ' + priceBody.dataset.snapshotDate + '. Zadzwoń, aby potwierdzić cenę.';
+    } else {
+      showPriceMessage('Ceny chwilowo niedostępne');
+      priceStatus.textContent = 'Nie można pobrać aktualnego cennika. Odśwież lub zapytaj nas o cenę przez WhatsApp.';
+    }
     priceStatus.dataset.state = 'error';
   } finally {
     priceBody.setAttribute('aria-busy', 'false');

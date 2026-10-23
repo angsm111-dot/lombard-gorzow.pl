@@ -45,9 +45,9 @@ Wynik: `dist/lombard-gorzow.html`. Opcjonalnie podaj docelową ścieżkę jako a
 - Publiczny odczyt: https://skup-zlota-gorzow.angsm111.workers.dev/api/prices
 - Sprawdzona implementacja panelu: commit `9c16cebbee0b1dc4df683e974ff47c2d192d5c1b`.
 
-Widok odczytuje gotowe `metals.gold.purities[próba].price` w PLN/g. Nie nalicza ponownie potrąceń i nie używa hasła administratora. Lista prób pochodzi z API. Aktualizacja przy otwarciu, co minutę w widocznej karcie, po powrocie do karty i przyciskiem. Przy błędzie usuwa stare ceny. Data notowań z `fetchedAt` jest prezentowana w strefie Europe/Warsaw.
+Widok odczytuje gotowe `metals.gold.purities[próba].price` w PLN/g. Nie nalicza ponownie potrąceń i nie używa hasła administratora. Lista prób pochodzi z API. Aktualizacja przy otwarciu, co minutę w widocznej karcie, po powrocie do karty i przyciskiem. Przy błędzie zachowuje ostatnio pobrane ceny z datą notowań i wyraźnym ostrzeżeniem, że aktualność nie została potwierdzona. Data notowań z `fetchedAt` jest prezentowana w strefie Europe/Warsaw.
 
-Wdrożone API musi udostępniać publiczny CORS `Access-Control-Allow-Origin: *`, obecny w kodzie panelu. Produkcyjny odczyt z tej sesji był blokowany przez proxy 403. Dodanie domeny API zapisano w projekcie konfiguracji środowiska; jej aktywacja wymaga zapisania i publikacji w ustawieniach środowiska. Nie potwierdzono odczytu na żywo ani wdrożenia API. Nie zmieniano kodu ani danych panelu.
+Wdrożone API musi udostępniać publiczny CORS `Access-Control-Allow-Origin: *`, obecny w kodzie panelu. Produkcyjny odczyt przez curl z weryfikacją TLS został potwierdzony 24.10.2026; API zwraca dziewięć prób złota i publiczny CORS. Bezpośredni odczyt w testowym Chromium blokuje certyfikat proxy środowiska (`ERR_CERT_AUTHORITY_INVALID`), nie brak danych panelu. Dodanie domeny API zapisano w projekcie konfiguracji środowiska; jej aktywacja wymaga zapisania i publikacji w ustawieniach środowiska. Potwierdzono odpowiedź wdrożonego API; bezpośredni odczyt w zwykłej przeglądarce poza środowiskiem pozostaje do sprawdzenia. Nie zmieniano kodu ani danych panelu.
 
 ## Sprawdzone zachowanie
 
@@ -55,7 +55,7 @@ Testy w Chromium/Playwright: kalkulator (15/30 dni, zakres, grosze, niepoprawne 
 
 ## Do zrobienia przed publikacją
 
-1. Potwierdzić odczyt cen z wdrożonego API w przeglądarce.
+1. Potwierdzić bezpośredni odczyt cen w przeglądarce po wdrożeniu na JDM.
 2. Uzupełnić adres firmy i godziny otwarcia.
 3. Podłączyć obsługę formularza wyceny i informacje o przetwarzaniu danych. Obecnie formularz jest demonstracyjny i nie wysyła danych.
 4. W razie potrzeby potwierdzić profil OLX: https://www.olx.pl/oferty/uzytkownik/G2XGE/ pochodzi z https://sezam.com.pl/oferta-olx-allegro/. Właściciel odłożył podanie linku na później.
@@ -67,3 +67,9 @@ Testy w Chromium/Playwright: kalkulator (15/30 dni, zakres, grosze, niepoprawne 
 `assets/sezam-logo.png`: https://sezam.com.pl/wp-content/uploads/2021/04/SezamLombard_logoRGB-1.png.
 
 `assets/zlota-bizuteria.png`: fotorealistyczna grafika wygenerowana AI; nie jest fotografią rzeczywistych produktów firmy.
+
+## Ostatnio pobrany cennik i kontakt telefoniczny
+
+`python3 scripts/update_prices.py` pobiera publiczne ceny przez curl z weryfikacją TLS i zapisuje zweryfikowany snapshot `prices-snapshot.json` oraz wiersze tabeli w HTML. Następnie `python3 scripts/export.py` generuje samodzielny plik. Dzięki temu cennik jest widoczny także przy zablokowanym JS lub błędzie sieci. Statyczne ceny mają datę i nie są przedstawiane jako potwierdzone aktualne; działający JS nadal odświeża je z panelu. W razie zmiany cen dla wersji bez JS odśwież snapshot przed wdrożeniem.
+
+Kontakt zawiera osobne przyciski WhatsApp i „Zadzwoń” (`tel:+48601775146`). Usunięto ze strony notatkę o kalkulacji według sezam.com.pl na prośbę właściciela.

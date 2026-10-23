@@ -1,0 +1,52 @@
+{
+  "source": "https://skup-zlota-gorzow.angsm111.workers.dev/api/prices",
+  "fetchedAt": "2026-10-23T23:30:19.035Z",
+  "savedAt": "2026-10-23T23:30:31.861284+00:00",
+  "purities": {
+    "333": {
+      "price": 117.69,
+      "margin": 30,
+      "mode": "auto"
+    },
+    "375": {
+      "price": 160.94,
+      "margin": 15,
+      "mode": "auto"
+    },
+    "500": {
+      "price": 214.58,
+      "margin": 15,
+      "mode": "auto"
+    },
+    "585": {
+      "price": 251.06,
+      "margin": 15,
+      "mode": "auto"
+    },
+    "750": {
+      "price": 321.87,
+      "margin": 15,
+      "mode": "auto"
+    },
+    "916": {
+      "price": 393.11,
+      "margin": 15,
+      "mode": "auto"
+    },
+    "960": {
+      "price": 412,
+      "margin": 15,
+      "mode": "auto"
+    },
+    "986": {
+      "price": 460.49,
+      "margin": 7.5,
+      "mode": "auto"
+    },
+    "999": {
+      "price": 428.73,
+      "margin": 15,
+      "mode": "auto"
+    }
+  }
+}
