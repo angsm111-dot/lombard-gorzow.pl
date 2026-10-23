@@ -36,3 +36,5 @@ footer{background:var(--forest);border-top:2px solid var(--gold)}footer .logo{co
 .whatsapp-card .whatsapp-button{background:#25d366;color:#fff;border:1px solid #1cb65a;border-radius:8px;display:inline-flex;justify-content:center;gap:12px;align-items:center;font-size:14px;font-weight:700;padding:15px 22px}.whatsapp-card .whatsapp-button:hover{background:#20c15c;color:#fff}.whatsapp-button .whatsapp-logo{flex-shrink:0;color:#fff}.whatsapp-card>svg{color:#128c4a}
 
 .whatsapp-card .call-button{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#25334b;color:#fff;border-radius:8px;padding:15px 22px;font-size:14px;font-weight:bold;margin:10px 0 0 10px}.whatsapp-card .call-button:hover{background:#354967}@media(max-width:450px){.whatsapp-card .call-button{margin-left:0;margin-right:10px}}
+
+.whatsapp-card .call-button{display:flex;width:fit-content;margin:15px 0 0}.whatsapp-card .whatsapp-button{display:flex;width:fit-content;margin:12px 0 0}
