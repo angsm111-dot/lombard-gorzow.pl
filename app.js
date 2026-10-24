@@ -99,6 +99,7 @@ function calculateFee() {
   const valid = feeAmount.value !== '' && Number.isFinite(amount) && feeAmount.validity.valid;
   feeAmount.setAttribute('aria-invalid', String(!valid));
   feeResults.hidden = !valid;
+  feeAmount.setAttribute('aria-describedby', valid ? 'fee-results' : 'fee-error');
   feeError.textContent = valid ? '' : 'Podaj kwotę od 50 do 100 000 zł, z dokładnością do grosza.';
   document.querySelectorAll('[data-fee-amount]').forEach(button => {
     button.setAttribute('aria-pressed', String(valid && Number(button.dataset.feeAmount) === amount));

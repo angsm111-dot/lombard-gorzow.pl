@@ -83,3 +83,5 @@ Artykuły blogowe i sekcja przyjmowanych przedmiotów mają zdjęcia nagłówkow
 Do 900 px: przycisk z ikoną i napisem „Menu”, atrybuty aria-expanded i aria-controls, zamykanie po wyborze odnośnika, kliknięciu poza nagłówkiem i Escape (z przywróceniem fokusu). Menu oparto na natywnym details/summary: także bez JavaScript jest domyślnie zwinięte i otwiera się po kliknięciu „Menu”, również w podglądzie pobranego HTML. Powyżej 900 px standardowe menu. Układ zdjęć, kalkulatora, bloga i kontaktu dostosowany do mniejszych ekranów.
 
 Poprawka podglądu mobilnego: menu korzysta z natywnego HTML details/summary, a nie ze skryptu wymagającego aktywnego JS. Sprawdzono także w ramce sandbox bez allow-scripts.
+
+Kalkulator mobilny: domyślnie 15 dni / 2,5%. Wynik znajduje się tuż pod kwotą i przełącznikiem okresu. W podglądzie blokującym JavaScript zamiast statycznego wyniku jest informacja o otwarciu w przeglądarce. Natywne menu działa również bez JS, ale dynamiczne obliczenia wymagają JS.
