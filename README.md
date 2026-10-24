@@ -1,95 +1,106 @@
 # Lombard Sezam — lombard-gorzow.pl
 
-Projekt nowej strony Lombardu Sezam w Gorzowie Wielkopolskim. Statyczny HTML, CSS i JavaScript, bez instalowania pakietów. Paleta: granat, bordo i ciepłe beże.
+Lekka, wielostronicowa strona statyczna. Zawiera 15 osobnych plików HTML z treścią dostępną bez JavaScript. Domena docelowa: https://lombard-gorzow.pl. Hosting JDM nadal obsługuje obecną witrynę; nie zmienialiśmy hostingu, DNS ani poczty.
 
-## Kontynuacja pracy w chmurze
+## Uruchomienie i kontynuacja pracy
 
-Otwórz repozytorium `angsm111-dot/lombard-gorzow.pl`, gałąź `main`. Użyj istniejącego checkoutu w izolowanym środowisku; nie twórz dodatkowego Git worktree, chyba że użytkownik o to poprosi.
-
-W katalogu repozytorium uruchom:
+Repozytorium: `angsm111-dot/lombard-gorzow.pl`, gałąź `main`. Używaj istniejącego checkoutu w izolowanym środowisku chmurowym; nie twórz Git worktree bez prośby użytkownika.
 
 ```sh
+python3 scripts/build_site.py
 python3 -m http.server 5173 --bind 0.0.0.0
 ```
 
-Serwer jest procesem lokalnym i trzeba go uruchomić ponownie w nowej sesji. Pliki źródłowe: `index.html`, `style.css`, `app.js`, `assets/`. Serwer produkcyjny nie wymaga Pythona: wystarczy hosting plików statycznych.
+Python jest potrzebny tylko do lokalnego serwera i generowania plików. Hosting produkcyjny wymaga jedynie obsługi statycznych HTML/CSS/JS i obrazów. Nie ma zależności npm ani frameworka. Proces serwera trzeba uruchomić ponownie w nowej sesji.
 
-Samodzielny plik HTML do pobrania, z osadzonymi grafikami, stylem i skryptem:
+## Co edytować
+
+- `content/site.json`: źródło wspólnego nagłówka, stopki, sekcji i czterech artykułów. **Nie edytuj wygenerowanych HTML jako źródła** — następny build je zastąpi.
+- `scripts/build_site.py`: struktura podstron, ich tytuły, opisy, canonical i generowanie mapy witryny.
+- `style.css`: wspólne style, responsywność i natywne menu mobilne.
+- `app.js`: tylko wspólne menu i demonstracyjny formularz.
+- `calculator.js`: kalkulator opłat, ładowany wyłącznie na stronie kalkulatora.
+- `prices.js`: odczyt publicznych cen, ładowany wyłącznie w czterech cennikach.
+- `prices-snapshot.json`: ostatnio pobrane rzeczywiste ceny wszystkich metali z datą notowań.
+- `assets/`: lokalne WebP i logo PNG. Zdjęcia są fotorealistycznymi ilustracjami AI, nie dokumentacją produktów czy lokalu firmy.
+
+Po zmianach źródeł uruchom `python3 scripts/build_site.py`, a potem sprawdź wynik. Wygenerowane HTML są śledzone w Git, więc hosting nie musi uruchamiać generatora.
+
+## Adresy stron
+
+- `/` — strona główna z jasnym zdjęciem i informacją o promocji;
+- `/co-przyjmujemy.html` — złoto i srebro, telefony/laptopy, elektronarzędzia, rowery i inne przedmioty;
+- `/na-sprzedaz.html` — przycisk OLX do profilu z sezam.com.pl;
+- `/cennik.html` — wybór metalu;
+- `/cennik-zlota.html`, `/cennik-srebra.html`, `/cennik-platyny.html`, `/cennik-palladu.html` — osobne cenniki z przełącznikiem metali;
+- `/kalkulator-oplat.html` — opłaty 2,5% / 15 dni i 5% / 30 dni;
+- `/kontakt.html` — adres, dojazd, telefon, WhatsApp i demonstracyjny formularz;
+- `/blog.html` — spis czterech artykułów;
+- `/blog/co-przyjmujemy-do-lombardu.html`;
+- `/blog/ile-warte-jest-zloto.html`;
+- `/blog/telefon-laptop-przed-sprzedaza.html`;
+- `/blog/swieta-bozego-narodzenia-2027.html`.
+
+Każda strona ma jeden H1, własny title, description i canonical. Artykuły mają pełną treść w HTML i dane strukturalne BlogPosting. `sitemap.xml` obejmuje wszystkie 15 stron, a `robots.txt` podaje jej adres. Nie ma routingu wyłącznie po hashach ani wymogu JavaScript do indeksowania treści. Rozdzielenie adresów nie gwarantuje wyższej pozycji; ważne są też jakość treści i rzeczywista publikacja.
+
+## Ceny z panelu SEZAM
+
+Panel: https://skup-zlota-gorzow.angsm111.workers.dev/admin
+
+Repozytorium panelu: https://github.com/angsm111-dot/nowa-skup-zlota-gorzow
+
+Publiczny odczyt: https://skup-zlota-gorzow.angsm111.workers.dev/api/prices
+
+Cenniki odczytują `metals[gold|silver|platinum|palladium].purities[próba].price` w PLN/g. Stawki już uwzględniają ustawienia panelu — nie doliczamy potrąceń ponownie. Nie są potrzebne hasła ani klucze administratora. API zwraca publiczny CORS `Access-Control-Allow-Origin: *`.
+
+```sh
+python3 scripts/update_prices.py
+```
+
+Polecenie pobiera i sprawdza wszystkie cztery cenniki z weryfikacją TLS, zapisuje snapshot i regeneruje HTML. Przy błędzie nie zapisuje nieprawidłowych danych. Odśwież snapshot przed wdrożeniem.
+
+W przeglądarce cennik odświeża się po otwarciu, co minutę w widocznej karcie, po powrocie do karty i przyciskiem. Podczas błędu zachowuje ostatnie ceny z datą i ostrzeżeniem o braku potwierdzenia aktualności. Bez JS przełączanie metali działa przez normalne linki HTML, a ceny są widoczne z datą pobrania. Brylanty mają nieaktywny przycisk „w budowie”, bez wymyślonych stawek.
+
+Produkcyjne API zostało odczytane przez curl z weryfikacją TLS. Bezpośredni fetch w Chromium środowiska chmurowego wcześniej blokował certyfikat lokalnego proxy (`ERR_CERT_AUTHORITY_INVALID`). Test przeglądarkowy używa prawidłowej odpowiedzi snapshotu i nie dowodzi bezpośredniego połączenia z API na hostingu JDM. Należy je zweryfikować po wdrożeniu.
+
+## Kalkulator i kontakt
+
+Stawki z kalkulatora sezam.com.pl (odczyt 24.10.2026): 50–100 000 zł, 2,5% / 15 dni i 5% / 30 dni. Domyślnie 15 dni. Opłata jest zaokrąglana do grosza, a suma zawiera kwotę i opłatę. Stawki są zapisane w kodzie, niezależnie od cennika metali. Dynamiczne przeliczanie wymaga JavaScript; w podglądzie blokującym skrypty wyświetlana jest odpowiednia informacja.
+
+Adres: ul. Pocztowa 11, 66-400 Gorzów Wielkopolski. Telefon i WhatsApp: +48 601 775 146. „Zadzwoń” znajduje się nad WhatsAppem. W stopce są sezam.com.pl, srebrogorzow.pl i zlotogorzow.pl.
+
+OLX: https://www.olx.pl/oferty/uzytkownik/G2XGE/ — sprawdzony w zakładce https://sezam.com.pl/oferta-olx-allegro/.
+
+Logo: https://sezam.com.pl/wp-content/uploads/2021/04/SezamLombard_logoRGB-1.png.
+
+## Szybkość
+
+Brak zewnętrznych fontów, bibliotek UI, trackerów i frameworka. Wspólne CSS/JS są współdzielone między podstronami. Wersje skryptów i CSS są oznaczone skrótem zawartości. Zdjęcia mają wymiary i WebP; te niżej na stronie są ładowane leniwie. Cena jest pobierana tylko na cenniku, nie na głównej i w artykułach. `.htaccess` zawiera opcjonalną kompresję i cache dla Apache/LiteSpeed. Ostateczna szybkość zależy również od konfiguracji JDM i wymaga pomiaru po publikacji.
+
+## Kontrole
+
+```sh
+python3 scripts/build_site.py
+python3 -m unittest discover -s tests -v
+node --check app.js
+node --check prices.js
+node --check calculator.js
+```
+
+Opcjonalnie, po uruchomieniu serwera i z dostępnym Playwright/Chromium:
+
+```sh
+SITE_URL=http://127.0.0.1:5173/ node tests/browser.cjs
+```
+
+Test przyjmuje `PLAYWRIGHT_MODULE` jako ścieżkę do dostępnego modułu oraz `CHROMIUM_PATH` jako ścieżkę do przeglądarki. Sprawdza 15 stron przy 320/390/768/1440 px, menu, metalowe cenniki, zmianę ceny panelu, błędy sieci, kalkulator, blog i tryb bez JS.
+
+## Paczka do hostingu / podglądu
 
 ```sh
 python3 scripts/export.py
 ```
 
-Wynik: `dist/lombard-gorzow.html`. Opcjonalnie podaj docelową ścieżkę jako argument. Wynik jest generowany z repozytorium; katalog `dist/` nie jest śledzony.
+Wynik: `dist/lombard-gorzow.zip`. To kompletna wielostronicowa witryna, a nie pojedynczy plik HTML. Archiwum obejmuje wszystkie podstrony, używane grafiki, CSS, JS, mapę witryny, robots.txt i `.htaccess`, bez plików źródłowych panelu czy sekretów. Rozpakuj i otwórz przez lokalny serwer albo wgraj zawartość do katalogu domeny na hostingu.
 
-## Zawartość i ustalenia
-
-- Logo pobrane z sezam.com.pl; bez dodatkowego napisu powielającego logo.
-- Hasło „Tylko 5% / miesiąc dla nowych klientów”, z dopiskiem „Stawka 5% za 30 dni”.
-- „Najniższe opłaty w Gorzowie i woj. lubuskim” — treść przekazana przez właściciela.
-- Menu: Co przyjmujemy, Na sprzedaż, Cennik skupu złota, Sprawdź, ile zapłacisz, Blog, Kontakt.
-- Brak ofert produktów i ich cen na głównej. Sekcja sprzedaży odsyła do OLX.
-- WhatsApp: +48 601 775 146; przycisk otwiera rozmowę, nie wysyła wiadomości automatycznie.
-- Blog: cztery pełne artykuły rozwijane na stronie, o przyjmowanych przedmiotach, złocie, przygotowaniu elektroniki i świętach Bożego Narodzenia 2027.
-- Stopka: sezam.com.pl, srebrogorzow.pl, zlotogorzow.pl.
-- Docelowa domena: lombard-gorzow.pl, obecnie wskazuje inną stronę na hostingu JDM. Nie zmieniano DNS ani hostingu.
-
-## Kalkulator opłat
-
-Źródło stawek: https://sezam.com.pl/kalkulator-oplat/ (odczyt 24.10.2026). Zakres 50–100 000 zł; 2,5% za 15 dni i 5% za 30 dni. Wynik pokazuje opłatę za wybrany okres oraz kwotę razem z opłatą, z zaokrągleniem do grosza. Stawki są zapisane w kodzie, niezależnie od API cen złota. Dostępne pole kwoty, suwak, przyciski przykładowych kwot i walidacja.
-
-## Cennik z panelu SEZAM
-
-- Repozytorium panelu: https://github.com/angsm111-dot/nowa-skup-zlota-gorzow
-- Panel: https://skup-zlota-gorzow.angsm111.workers.dev/admin
-- Publiczny odczyt: https://skup-zlota-gorzow.angsm111.workers.dev/api/prices
-- Sprawdzona implementacja panelu: commit `9c16cebbee0b1dc4df683e974ff47c2d192d5c1b`.
-
-Widok odczytuje gotowe `metals.gold.purities[próba].price` w PLN/g. Nie nalicza ponownie potrąceń i nie używa hasła administratora. Lista prób pochodzi z API. Aktualizacja przy otwarciu, co minutę w widocznej karcie, po powrocie do karty i przyciskiem. Przy błędzie zachowuje ostatnio pobrane ceny z datą notowań i wyraźnym ostrzeżeniem, że aktualność nie została potwierdzona. Data notowań z `fetchedAt` jest prezentowana w strefie Europe/Warsaw.
-
-Wdrożone API musi udostępniać publiczny CORS `Access-Control-Allow-Origin: *`, obecny w kodzie panelu. Produkcyjny odczyt przez curl z weryfikacją TLS został potwierdzony 24.10.2026; API zwraca dziewięć prób złota i publiczny CORS. Bezpośredni odczyt w testowym Chromium blokuje certyfikat proxy środowiska (`ERR_CERT_AUTHORITY_INVALID`), nie brak danych panelu. Dodanie domeny API zapisano w projekcie konfiguracji środowiska; jej aktywacja wymaga zapisania i publikacji w ustawieniach środowiska. Potwierdzono odpowiedź wdrożonego API; bezpośredni odczyt w zwykłej przeglądarce poza środowiskiem pozostaje do sprawdzenia. Nie zmieniano kodu ani danych panelu.
-
-## Sprawdzone zachowanie
-
-Testy w Chromium/Playwright: kalkulator (15/30 dni, zakres, grosze, niepoprawne dane, suwak, przyciski), blog (cztery teksty, otwieranie i zamykanie), obrazy, menu, WhatsApp, odnośniki oraz układ komputerowy bez błędów JS. Cennik sprawdzono z odpowiedzią generowaną przez kod Workera: ręczne i automatyczne stawki, zmiana ceny, błąd HTTP, błędne dane i odzyskanie połączenia. To nie zastępuje sprawdzenia produkcyjnego API.
-
-## Do zrobienia przed publikacją
-
-1. Potwierdzić bezpośredni odczyt cen w przeglądarce po wdrożeniu na JDM.
-2. Uzupełnić godziny otwarcia. Adres z sezam.com.pl: ul. Pocztowa 11, 66-400 Gorzów Wielkopolski.
-3. Podłączyć obsługę formularza wyceny i informacje o przetwarzaniu danych. Obecnie formularz jest demonstracyjny i nie wysyła danych.
-4. W razie potrzeby potwierdzić profil OLX: https://www.olx.pl/oferty/uzytkownik/G2XGE/ pochodzi z https://sezam.com.pl/oferta-olx-allegro/. Właściciel odłożył podanie linku na później.
-5. Przed publikacją obejrzeć wersję mobilną na rzeczywistych urządzeniach. Menu mobilne i responsywność zweryfikowano w Chromium dla 320, 360, 390, 430, 600, 768, 900, 1024 i 1440 px.
-6. Ustalić sposób wdrożenia na JDM, wykonać kopię obecnej strony i zachować konfigurację poczty przed podmianą. Strona nie została opublikowana.
-
-## Grafiki
-
-`assets/sezam-logo.png`: https://sezam.com.pl/wp-content/uploads/2021/04/SezamLombard_logoRGB-1.png.
-
-`assets/zlota-bizuteria.png`: fotorealistyczna grafika wygenerowana AI; nie jest fotografią rzeczywistych produktów firmy.
-
-## Ostatnio pobrany cennik i kontakt telefoniczny
-
-`python3 scripts/update_prices.py` pobiera publiczne ceny przez curl z weryfikacją TLS i zapisuje zweryfikowany snapshot `prices-snapshot.json` oraz wiersze tabeli w HTML. Następnie `python3 scripts/export.py` generuje samodzielny plik. Dzięki temu cennik jest widoczny także przy zablokowanym JS lub błędzie sieci. Statyczne ceny mają datę i nie są przedstawiane jako potwierdzone aktualne; działający JS nadal odświeża je z panelu. W razie zmiany cen dla wersji bez JS odśwież snapshot przed wdrożeniem.
-
-Kontakt zawiera osobne przyciski WhatsApp i „Zadzwoń” (`tel:+48601775146`). Usunięto ze strony notatkę o kalkulacji według sezam.com.pl na prośbę właściciela.
-
-## Zdjęcia poglądowe
-
-Artykuły blogowe i sekcja przyjmowanych przedmiotów mają zdjęcia nagłówkowe. Dodatkowy kadr prezentuje wycenę biżuterii. Grafiki w `assets/blog-*.webp` oraz `assets/wycena-bizuterii.webp` są wygenerowanymi fotorealistycznymi ilustracjami, nie dokumentują lokalu, pracowników ani produktów firmy. Obrazy mają teksty alternatywne i leniwe ładowanie.
-
-## Nawigacja mobilna
-
-Do 900 px: przycisk z ikoną i napisem „Menu”, atrybuty aria-expanded i aria-controls, zamykanie po wyborze odnośnika, kliknięciu poza nagłówkiem i Escape (z przywróceniem fokusu). Menu oparto na natywnym details/summary: także bez JavaScript jest domyślnie zwinięte i otwiera się po kliknięciu „Menu”, również w podglądzie pobranego HTML. Powyżej 900 px standardowe menu. Układ zdjęć, kalkulatora, bloga i kontaktu dostosowany do mniejszych ekranów.
-
-Poprawka podglądu mobilnego: menu korzysta z natywnego HTML details/summary, a nie ze skryptu wymagającego aktywnego JS. Sprawdzono także w ramce sandbox bez allow-scripts.
-
-Kalkulator mobilny: domyślnie 15 dni / 2,5%. Wynik znajduje się tuż pod kwotą i przełącznikiem okresu. W podglądzie blokującym JavaScript zamiast statycznego wyniku jest informacja o otwarciu w przeglądarce. Natywne menu działa również bez JS, ale dynamiczne obliczenia wymagają JS.
-
-Sekcja „Co przyjmujemy”: dokładnie trzy ilustrowane kategorie, w kolejności Złoto i srebro (biżuteria, moneta, sztabka), Telefony i laptopy, Elektronarzędzia (wiertarko-wkrętarka i szlifierka). Obrazy skup-zlota-srebra.webp i elektronarzedzia.webp są wygenerowanymi grafikami poglądowymi.
-
-Pierwszy ekran: fotograficzne tło z gotówką, telefonem i biżuterią (`assets/lombard-gotowka.webp`, grafika poglądowa AI), hasło „Pożyczki pod zastaw na najlepszych warunkach w Gorzowie”, mniejszy blok promocji 5% za miesiąc / 30 dni. Na mobile fotografia jest widoczna nad treścią, a kontrast ciemnego tekstu zapewnia jasna kremowa nakładka.
-
-Slogan lokalny „na najlepszych warunkach w Gorzowie” pozostaje w jednej linii przy szerokościach 320–1440 px. Zdjęcie pierwszego ekranu zawiera również obrączkę, zegarek i złoty łańcuszek na banknotach.
-
-Aktualizacja: zdjęcie główne zawiera sztabkę i monetę, „Najniższe opłaty” jest wyraźnym dużym hasłem. Opis zachęca do zapytania o różne przedmioty. Sekcja „Co przyjmujemy” zawiera cztery kategorie: Złoto i srebro, Telefony i laptopy, Elektronarzędzia i Rowery (zdjęcie poglądowe AI w assets/rowery.webp).
+Przed wdrożeniem: kopia istniejącej strony JDM, zachowanie ustawień poczty, potwierdzenie API, uzupełnienie godzin otwarcia oraz podłączenie obsługi formularza i informacji o przetwarzaniu danych. Formularz obecnie niczego nie wysyła. Strona nie została opublikowana przez zapis do repozytorium.

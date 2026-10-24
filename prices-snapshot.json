@@ -1,52 +1,153 @@
 {
   "source": "https://skup-zlota-gorzow.angsm111.workers.dev/api/prices",
-  "fetchedAt": "2026-10-23T23:30:19.035Z",
-  "savedAt": "2026-10-23T23:30:31.861284+00:00",
-  "purities": {
-    "333": {
-      "price": 117.69,
-      "margin": 30,
-      "mode": "auto"
+  "fetchedAt": "2026-10-24T11:00:19.603Z",
+  "savedAt": "2026-10-24T11:02:29.371699+00:00",
+  "metals": {
+    "gold": {
+      "purities": {
+        "333": {
+          "price": 117.69,
+          "margin": 30,
+          "mode": "auto"
+        },
+        "375": {
+          "price": 160.94,
+          "margin": 15,
+          "mode": "auto"
+        },
+        "500": {
+          "price": 214.59,
+          "margin": 15,
+          "mode": "auto"
+        },
+        "585": {
+          "price": 251.06,
+          "margin": 15,
+          "mode": "auto"
+        },
+        "750": {
+          "price": 321.88,
+          "margin": 15,
+          "mode": "auto"
+        },
+        "916": {
+          "price": 393.12,
+          "margin": 15,
+          "mode": "auto"
+        },
+        "960": {
+          "price": 412,
+          "margin": 15,
+          "mode": "auto"
+        },
+        "986": {
+          "price": 460.5,
+          "margin": 7.5,
+          "mode": "auto"
+        },
+        "999": {
+          "price": 428.74,
+          "margin": 15,
+          "mode": "auto"
+        }
+      }
     },
-    "375": {
-      "price": 160.94,
-      "margin": 15,
-      "mode": "auto"
+    "silver": {
+      "purities": {
+        "600": {
+          "price": 2.04,
+          "margin": 50,
+          "mode": "auto"
+        },
+        "800": {
+          "price": 2.72,
+          "margin": 50,
+          "mode": "auto"
+        },
+        "830": {
+          "price": 2.83,
+          "margin": 50,
+          "mode": "auto"
+        },
+        "835": {
+          "price": 2.84,
+          "margin": 50,
+          "mode": "auto"
+        },
+        "875": {
+          "price": 2.98,
+          "margin": 50,
+          "mode": "auto"
+        },
+        "900": {
+          "price": 3.06,
+          "margin": 50,
+          "mode": "auto"
+        },
+        "925": {
+          "price": 3.78,
+          "margin": 40,
+          "mode": "auto"
+        },
+        "960": {
+          "price": 4.25,
+          "margin": 35,
+          "mode": "auto"
+        },
+        "999": {
+          "price": 5.44,
+          "margin": 20,
+          "mode": "auto"
+        }
+      }
     },
-    "500": {
-      "price": 214.58,
-      "margin": 15,
-      "mode": "auto"
+    "platinum": {
+      "purities": {
+        "850": {
+          "price": 133.44,
+          "margin": 20,
+          "mode": "auto"
+        },
+        "900": {
+          "price": 141.29,
+          "margin": 20,
+          "mode": "auto"
+        },
+        "950": {
+          "price": 149.14,
+          "margin": 20,
+          "mode": "auto"
+        },
+        "999": {
+          "price": 156.83,
+          "margin": 20,
+          "mode": "auto"
+        }
+      }
     },
-    "585": {
-      "price": 251.06,
-      "margin": 15,
-      "mode": "auto"
-    },
-    "750": {
-      "price": 321.87,
-      "margin": 15,
-      "mode": "auto"
-    },
-    "916": {
-      "price": 393.11,
-      "margin": 15,
-      "mode": "auto"
-    },
-    "960": {
-      "price": 412,
-      "margin": 15,
-      "mode": "auto"
-    },
-    "986": {
-      "price": 460.49,
-      "margin": 7.5,
-      "mode": "auto"
-    },
-    "999": {
-      "price": 428.73,
-      "margin": 15,
-      "mode": "auto"
+    "palladium": {
+      "purities": {
+        "500": {
+          "price": 52.76,
+          "margin": 20,
+          "mode": "auto"
+        },
+        "850": {
+          "price": 89.7,
+          "margin": 20,
+          "mode": "auto"
+        },
+        "950": {
+          "price": 100.25,
+          "margin": 20,
+          "mode": "auto"
+        },
+        "999": {
+          "price": 105.42,
+          "margin": 20,
+          "mode": "auto"
+        }
+      }
     }
   }
 }

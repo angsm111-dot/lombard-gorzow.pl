@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+"""Build crawlable static pages using only Python's standard library."""
+import hashlib
+import html
+import json
+import re
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+ROOT = Path(__file__).resolve().parent.parent
+BASE = 'https://lombard-gorzow.pl'
+DATA = json.loads((ROOT / 'content/site.json').read_text())
+SNAPSHOT = json.loads((ROOT / 'prices-snapshot.json').read_text())
+SECTIONS = DATA['sections']
+METALS = {
+    'gold': ('złota', 'Złoto', 'cennik-zlota.html'),
+    'silver': ('srebra', 'Srebro', 'cennik-srebra.html'),
+    'platinum': ('platyny', 'Platyna', 'cennik-platyny.html'),
+    'palladium': ('palladu', 'Pallad', 'cennik-palladu.html'),
+}
+ROUTES = {'przyjmujemy': 'co-przyjmujemy.html', 'sprzedaz': 'na-sprzedaz.html', 'zloto': 'cennik-zlota.html',
+          'kalkulator': 'kalkulator-oplat.html', 'blog': 'blog.html', 'kontakt': 'kontakt.html',
+          'wycena': 'kontakt.html#wycena', 'zasady': 'co-przyjmujemy.html'}
+PAGES = []
+
+def escape(s):
+    return html.escape(str(s), quote=True)
+
+def revision(filename):
+    return hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()[:10]
+
+def links(fragment, prefix):
+    for anchor, route in ROUTES.items():
+        fragment = fragment.replace(f'href="#{anchor}"', f'href="{prefix}{route}"')
+    fragment = fragment.replace('href="#"', f'href="{prefix}index.html"')
+    fragment = re.sub(r'(src=")assets/', lambda m: m[1] + prefix + 'assets/', fragment)
+    return fragment
+
+def page(path, title, description, content, scripts=(), article=None):
+    prefix = '../' if '/' in path else ''
+    canonical = BASE + ('/' if path == 'index.html' else '/' + path)
+    header = links(DATA['header'], prefix)
+    header = header.replace('>Cennik skupu złota</a>', '>Cennik skupu</a>').replace(f'href="{prefix}cennik-zlota.html">Cennik skupu', f'href="{prefix}cennik.html">Cennik skupu')
+    header = header.replace(f'href="{prefix}{path}"', f'href="{prefix}{path}" aria-current="page"')
+    if path.startswith('cennik-'):
+        header = header.replace(f'href="{prefix}cennik.html"', f'href="{prefix}cennik.html" aria-current="page"')
+    schemas = [{'@context': 'https://schema.org', '@type': 'WebSite', 'name': 'Lombard Sezam', 'url': BASE + '/'}]
+    if article:
+        schemas.append({'@context': 'https://schema.org', '@type': 'BlogPosting', 'headline': article['title'],
+                        'description': article['lead'], 'image': BASE + '/assets/' + article['image'],
+                        'author': {'@type': 'Organization', 'name': 'Lombard Sezam'}, 'mainEntityOfPage': canonical})
+    image = BASE + '/assets/' + (article['image'] if article else 'lombard-gotowka.webp')
+    schemas_json = json.dumps(schemas, ensure_ascii=False).replace('</', '<\\/')
+    script_tags = ''.join(f'<script defer src="{prefix}{script}?v={revision(script)}"></script>' for script in scripts)
+    body = f'''<!doctype html>
+<html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{escape(title)}</title><meta name="description" content="{escape(description)}"><link rel="canonical" href="{canonical}">
+<meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:title" content="{escape(title)}"><meta property="og:description" content="{escape(description)}"><meta property="og:url" content="{canonical}"><meta property="og:image" content="{image}"><meta property="og:locale" content="pl_PL">
+<link rel="stylesheet" href="{prefix}style.css?v={revision('style.css')}">
+<script type="application/ld+json">{schemas_json}</script>
+<script defer src="{prefix}app.js?v={revision('app.js')}"></script>
+{script_tags}
+</head><body><a class="skip-link" href="#tresc">Przejdź do treści</a>{header}<main id="tresc">{links(content, prefix)}</main>{links(DATA['footer'], prefix)}</body></html>'''
+    target = ROOT / path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(body)
+    PAGES.append(path)
+
+def intro(title, paragraph):
+    return f'<section class="page-intro"><div class="eyebrow">LOMBARD SEZAM · GORZÓW WIELKOPOLSKI</div><h1>{title}</h1><p>{paragraph}</p></section>'
+
+def blog_cards(limit=None):
+    posts = DATA['posts'][:limit] if limit else DATA['posts']
+    return '<div class="blog-grid">' + ''.join(f'''<article class="blog-card"><a class="blog-image-link" href="blog/{p['slug']}.html" aria-label="{escape(p['title'])}"><img class="blog-photo" src="assets/{p['image']}" alt="{escape(p['title'])} — ilustracja poglądowa" loading="lazy" decoding="async" width="1672" height="941"></a><div class="blog-meta">PORADNIK LOMBARDU SEZAM</div><h2 class="blog-card-title"><a href="blog/{p['slug']}.html">{escape(p['title'])}</a></h2><p class="blog-lead">{escape(p['lead'])}</p><a class="read-article" href="blog/{p['slug']}.html">Czytaj artykuł →</a></article>''' for p in posts) + '</div>'
+
+home = SECTIONS['hero'] + SECTIONS['zasady']
+home += '<section class="home-links"><h2>W czym możemy pomóc?</h2><div class="service-links"><a href="co-przyjmujemy.html"><strong>Co przyjmujemy</strong><span>Złoto, elektronika, elektronarzędzia, rowery i inne przedmioty →</span></a><a href="cennik.html"><strong>Cennik metali szlachetnych</strong><span>Sprawdź skup złota, srebra, platyny i palladu →</span></a><a href="na-sprzedaz.html"><strong>Na sprzedaż</strong><span>Zobacz nasze aktualne ogłoszenia na OLX →</span></a></div></section>'
+home += '<section class="blog-section"><div class="section-head"><div><div class="eyebrow">PORADNIKI</div><h2>Blog Lombardu Sezam</h2></div><a class="link" href="blog.html">Wszystkie artykuły →</a></div>' + blog_cards(2) + '</section>'
+page('index.html', 'Lombard Gorzów — pożyczki pod zastaw | Sezam', 'Lombard Sezam w Gorzowie Wielkopolskim. Pożyczki pod zastaw, 5% za 30 dni dla nowych klientów. Skup metali szlachetnych. Pocztowa 11.', home)
+
+accepted = SECTIONS['przyjmujemy'].replace('<h2>Co <em>przyjmujemy?</em></h2>', '<h1>Co przyjmujemy w lombardzie w Gorzowie?</h1>')
+accepted += '<section class="reading-section"><h2>Przynieś przedmiot lub zapytaj o wycenę</h2><p>Przyjmujemy różne wartościowe przedmioty. Podane kategorie to przykłady, a nie zamknięta lista. Jeśli masz inny przedmiot, napisz do Lombardu Sezam lub zadzwoń. Ustalimy, czy możemy go przyjąć i jakie informacje będą potrzebne.</p><p>Przy elektronice i elektronarzędziach podaj model, stan oraz posiadane akcesoria. Do roweru przygotuj informacje o wyposażeniu i ewentualnych usterkach. Przy złocie i srebrze znaczenie mają między innymi próba oraz masa. Ostateczna wycena wymaga sprawdzenia przedmiotu.</p><a class="button" href="kontakt.html">Zapytaj o swój przedmiot →</a></section>'
+page('co-przyjmujemy.html', 'Co przyjmujemy pod zastaw? Lombard Gorzów | Sezam', 'Złoto, srebro, telefony, laptopy, elektronarzędzia i rowery. Sprawdź, co przyjmuje Lombard Sezam w Gorzowie i jak przygotować przedmiot do wyceny.', accepted)
+
+sales = intro('Na sprzedaż — oferty Lombardu Sezam', 'Przeglądaj aktualne przedmioty w naszych ogłoszeniach OLX. Zdjęcia, ceny i dostępność znajdziesz przy konkretnej ofercie.') + SECTIONS['sprzedaz']
+sales += '<section class="reading-section"><h2>Sprawdź szczegóły przed zakupem</h2><p>Nasze ogłoszenia obejmują różne przedmioty, w tym biżuterię i elektronikę. Oferta zmienia się, dlatego przed przyjazdem na ul. Pocztową 11 w Gorzowie potwierdź dostępność interesującej Cię rzeczy.</p><p>Zapoznaj się z opisem stanu, zestawem akcesoriów i warunkami sprzedaży w ogłoszeniu. Masz pytanie o konkretny przedmiot? Prześlij nam link przez WhatsApp.</p><a class="link" href="kontakt.html">Kontakt z Lombardem Sezam →</a></section>'
+page('na-sprzedaz.html', 'Na sprzedaż — oferty OLX | Lombard Sezam Gorzów', 'Zobacz aktualne oferty Lombardu Sezam w Gorzowie na OLX. Przedmioty, zdjęcia, ceny i szczegóły ogłoszeń w jednym miejscu.', sales)
+
+metal_cards = '<div class="service-links">' + ''.join(f'<a href="{route}"><strong>Skup {name}</strong><span>Cennik za gram według próby →</span></a>' for name, label, route in METALS.values()) + '<div class="service-disabled"><strong>Brylanty</strong><span>W budowie — cennik niedostępny</span></div></div>'
+page('cennik.html', 'Cennik skupu metali szlachetnych Gorzów | Sezam', 'Wybierz cennik skupu złota, srebra, platyny lub palladu w Lombardzie Sezam w Gorzowie. Ceny za gram pochodzą ze wspólnego panelu cen.', intro('Cennik skupu metali szlachetnych', 'Wybierz metal i sprawdź ceny skupu za gram. Stawki dla poszczególnych prób są pobierane ze wspólnego cennika Sezam.') + '<section class="home-links">' + metal_cards + '</section>')
+
+stamp = datetime.fromisoformat(SNAPSHOT['fetchedAt'].replace('Z', '+00:00')).astimezone(ZoneInfo('Europe/Warsaw')).strftime('%d.%m.%Y, %H:%M')
+for key, (name, label, route) in METALS.items():
+    tab_links = []
+    for tab_key, (_, tab_label, tab_route) in METALS.items():
+        current = ' aria-current="page"' if tab_key == key else ''
+        tab_links.append(f'<a href="{tab_route}"{current}>{tab_label}</a>')
+    tabs = '<nav class="metal-tabs" aria-label="Wybierz metal">' + ''.join(tab_links) + '<button type="button" disabled aria-disabled="true">Brylanty <small>w budowie</small></button></nav>'
+    rows = ''
+    for purity, item in sorted(SNAPSHOT['metals'][key]['purities'].items(), key=lambda p: int(p[0])):
+        price = f"{item['price']:,.2f}".replace(',', ' ').replace('.', ',')
+        fraction = f'{int(purity) / 10:g}'.replace('.', ',')
+        rows += f'<tr><th scope="row">{purity} <span>{fraction}% metalu</span></th><td>{price} zł/g</td></tr>'
+    content = intro(f'Skup {name} w Gorzowie — cennik', f'Sprawdź ceny skupu {name} według próby. Kwoty podano w złotych za jeden gram metalu. Podane stawki uwzględniają ustawienia cennika Sezam.')
+    content += f'<section class="metal-content" data-price-metal="{key}">{tabs}<div class="gold-prices"><table><caption>Ceny skupu {name} za 1 gram</caption><thead><tr><th scope="col">Próba</th><th scope="col">Cena za gram</th></tr></thead><tbody id="price-rows" data-has-prices="true" data-snapshot-date="{stamp}">{rows}</tbody></table><p id="price-status" class="price-note" role="status">Ostatnio pobrany cennik · notowania: {stamp} (Polska). Aktualność cen potwierdzisz telefonicznie.</p><button type="button" id="refresh-prices" class="price-refresh">Odśwież cennik</button><noscript><p>Automatyczne odświeżanie wymaga JavaScript. Powyżej widoczny jest ostatnio pobrany cennik z datą notowań.</p></noscript></div></section>'
+    content += f'<section class="reading-section"><h2>Jak sprawdzić wartość {name}?</h2><p>Próba określa udział metalu szlachetnego w stopie. Cena w tabeli odnosi się już do podanej próby — nie przeliczaj jej ponownie przez zawartość metalu. Orientacyjną kwotę uzyskasz, mnożąc stawkę za gram przez masę elementów zakwalifikowanych do wyceny.</p><p>Kamienie, zapięcia i inne dodatki mogą wymagać osobnego sprawdzenia. Ostateczna wycena zależy od weryfikacji przedmiotu. Nie znasz próby? Skontaktuj się z nami przed wizytą przy ul. Pocztowej 11 w Gorzowie Wielkopolskim.</p><a class="button" href="kontakt.html">Zapytaj o wycenę →</a></section>'
+    page(route, f'Skup {name} Gorzów — ceny za gram | Lombard Sezam', f'Cennik skupu {name} w Gorzowie Wielkopolskim. Ceny za gram dla poszczególnych prób z panelu Sezam. Wycena przy ul. Pocztowej 11.', content, scripts=('prices.js',))
+
+calc = SECTIONS['kalkulator'].replace('<h2 id="fee-title">Sprawdź,<br> ile <em>zapłacisz.</em></h2>', '<h1 id="fee-title">Kalkulator opłat lombardu w Gorzowie</h1>')
+# Source may have the original line break without a following space.
+calc = re.sub(r'<h2 id="fee-title">.*?</h2>', '<h1 id="fee-title">Kalkulator opłat lombardu w Gorzowie</h1>', calc)
+page('kalkulator-oplat.html', 'Kalkulator opłat — 2,5% / 15 dni, 5% / 30 dni | Sezam', 'Sprawdź opłatę i łączną kwotę do spłaty w Lombardzie Sezam Gorzów. Kalkulator: 2,5% za 15 dni lub 5% za 30 dni, od 50 do 100 000 zł.', calc, scripts=('calculator.js',))
+
+contact = SECTIONS['kontakt'].replace('<h2>Masz pytanie?<br> Napisz na <em>WhatsApp.</em></h2>', '<h1>Kontakt — Lombard Sezam Gorzów</h1>')
+contact = re.sub(r'<h2>Masz pytanie\?.*?</h2>', '<h1>Kontakt — Lombard Sezam Gorzów</h1>', contact)
+page('kontakt.html', 'Kontakt i dojazd — Pocztowa 11, Gorzów | Lombard Sezam', 'Lombard Sezam: ul. Pocztowa 11, 66-400 Gorzów Wielkopolski. Zadzwoń 601 775 146, napisz na WhatsApp lub wyznacz trasę.', contact + SECTIONS['wycena'])
+page('blog.html', 'Blog — złoto, zastaw i praktyczne porady | Lombard Gorzów', 'Poradniki Lombardu Sezam: co przyjmujemy pod zastaw, wycena złota, przygotowanie telefonu do sprzedaży i planowanie świątecznych wydatków.', intro('Blog Lombardu Sezam', 'Praktyczne informacje o wycenie przedmiotów, złocie i przygotowaniu do wizyty w lombardzie.') + '<section class="blog-section">' + blog_cards() + '</section>')
+for post in DATA['posts']:
+    body = post['body'].replace('<h4>', '<h2>').replace('</h4>', '</h2>')
+    body = re.sub(r'<a class="link".*?</a>\s*$', '', body)
+    content = f'<article class="article-page"><nav class="breadcrumbs" aria-label="Ścieżka nawigacji"><a href="../index.html">Strona główna</a><span> / </span><a href="../blog.html">Blog</a></nav><header class="article-header"><div class="eyebrow">PORADNIK LOMBARDU SEZAM</div><h1>{escape(post["title"])}</h1><p>{escape(post["lead"])}</p></header><img class="article-photo" src="assets/{post["image"]}" alt="{escape(post["title"])} — ilustracja poglądowa" width="1672" height="941" fetchpriority="high"><div class="article-body">{body}<aside class="article-contact"><h2>Zapytaj w Lombardzie Sezam w Gorzowie</h2><p>Znajdziesz nas przy ul. Pocztowej 11. Opisz swój przedmiot lub zadzwoń, aby ustalić szczegóły przed wizytą.</p><a class="button" href="#kontakt">Kontakt →</a></aside></div></article>'
+    page('blog/' + post['slug'] + '.html', post['title'] + ' | Lombard Sezam Gorzów', post['lead'], content, article=post)
+
+sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join('<url><loc>' + BASE + ('/' if p == 'index.html' else '/' + p) + '</loc></url>\n' for p in PAGES) + '</urlset>\n'
+(ROOT / 'sitemap.xml').write_text(sitemap)
+(ROOT / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: ' + BASE + '/sitemap.xml\n')
+(ROOT / 'site-manifest.json').write_text(json.dumps({'pages': PAGES}, indent=2) + '\n')
+print('Built', len(PAGES), 'static HTML pages, sitemap and robots.txt.')

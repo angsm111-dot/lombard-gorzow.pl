@@ -1,0 +1,91 @@
+"""Check generated pages, crawlable local links, SEO metadata and static prices."""
+import json
+import unittest
+import xml.etree.ElementTree as ET
+from html.parser import HTMLParser
+from pathlib import Path
+from urllib.parse import unquote, urlsplit
+
+ROOT = Path(__file__).resolve().parent.parent
+
+class Document(HTMLParser):
+    def __init__(self, source):
+        super().__init__()
+        self.h1 = 0
+        self.ids = []
+        self.links = []
+        self.assets = []
+        self.canonical = []
+        self.description = []
+        self.titles = []
+        self.in_title = False
+        self.feed(source)
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        self.h1 += tag == 'h1'
+        if 'id' in a: self.ids.append(a['id'])
+        if tag == 'a' and 'href' in a: self.links.append(a['href'])
+        if tag in ('img', 'script') and a.get('src'): self.assets.append(a['src'])
+        if tag == 'link' and a.get('rel') == 'stylesheet': self.assets.append(a['href'])
+        if tag == 'link' and a.get('rel') == 'canonical': self.canonical.append(a['href'])
+        if tag == 'meta' and a.get('name') == 'description': self.description.append(a['content'])
+        if tag == 'title': self.in_title = True
+    def handle_endtag(self, tag):
+        if tag == 'title': self.in_title = False
+    def handle_data(self, data):
+        if self.in_title: self.titles.append(data)
+
+class SiteTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.pages = json.loads((ROOT / 'site-manifest.json').read_text())['pages']
+        cls.docs = {p: Document((ROOT / p).read_text()) for p in cls.pages}
+    def test_metadata_and_headings(self):
+        titles, descriptions = [], []
+        for name, doc in self.docs.items():
+            with self.subTest(page=name):
+                self.assertEqual(doc.h1, 1)
+                self.assertEqual(len(doc.ids), len(set(doc.ids)))
+                self.assertEqual(len(doc.canonical), 1)
+                self.assertEqual(doc.canonical[0], 'https://lombard-gorzow.pl' + ('/' if name == 'index.html' else '/' + name))
+                self.assertEqual(len(doc.description), 1)
+                self.assertTrue(doc.description[0])
+                self.assertTrue(doc.titles)
+                titles.append(''.join(doc.titles))
+                descriptions.append(doc.description[0])
+        self.assertEqual(len(titles), len(set(titles)))
+        self.assertEqual(len(descriptions), len(set(descriptions)))
+    def test_local_links_and_assets(self):
+        for name, doc in self.docs.items():
+            for url in doc.links + doc.assets:
+                parsed = urlsplit(url)
+                if parsed.scheme or parsed.netloc: continue
+                target = (ROOT / name).parent / unquote(parsed.path) if parsed.path else ROOT / name
+                with self.subTest(page=name, url=url):
+                    self.assertTrue(target.is_file())
+                    if parsed.fragment and target.suffix == '.html':
+                        self.assertIn(parsed.fragment, Document(target.read_text()).ids)
+    def test_crawlable_articles_and_sitemap(self):
+        articles = [p for p in self.pages if p.startswith('blog/')]
+        self.assertEqual(len(articles), 4)
+        for article in articles:
+            self.assertIn(article, self.docs['blog.html'].links)
+            self.assertIn('BlogPosting', (ROOT / article).read_text())
+        locations = [x.text for x in ET.parse(ROOT / 'sitemap.xml').findall('.//{*}loc')]
+        self.assertCountEqual(locations, [d.canonical[0] for d in self.docs.values()])
+    def test_all_metal_prices_exist_without_javascript(self):
+        snapshot = json.loads((ROOT / 'prices-snapshot.json').read_text())
+        for metal, filename in [('gold', 'cennik-zlota.html'), ('silver', 'cennik-srebra.html'), ('platinum', 'cennik-platyny.html'), ('palladium', 'cennik-palladu.html')]:
+            source = (ROOT / filename).read_text()
+            self.assertIn('data-price-metal="' + metal + '"', source)
+            for purity, entry in snapshot['metals'][metal]['purities'].items():
+                price = f"{entry['price']:,.2f}".replace(',', ' ').replace('.', ',')
+                self.assertIn(price + ' zł/g', source)
+            self.assertIn('disabled aria-disabled="true">Brylanty', source)
+    def test_only_needed_scripts(self):
+        for name, doc in self.docs.items():
+            js = [urlsplit(a).path for a in doc.assets if '.js' in a]
+            self.assertEqual('prices.js' in js, name.startswith('cennik-'))
+            self.assertEqual('calculator.js' in js, name == 'kalkulator-oplat.html')
+
+if __name__ == '__main__': unittest.main()
