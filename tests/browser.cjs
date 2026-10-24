@@ -36,7 +36,9 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
         await page.waitForSelector('#price-status[data-state="ready"]');
         const metal = await page.locator('[data-price-metal]').getAttribute('data-price-metal');
         assert.equal(await page.locator('#price-rows tr').count(), Object.keys(feed.metals[metal].purities).length);
-        assert.equal(await page.getByRole('button', { name: /Brylanty/ }).isDisabled(), true);
+        assert.equal(await page.getByText('Brylanty', { exact: true }).count(), 0);
+        assert.equal(await page.locator('.metal-tabs a').count(), 4);
+        assert.match(await page.locator('.jewelry-premium').innerText(), /płacimy więcej niż za złom/);
       }
     }
     if (width === 390) {

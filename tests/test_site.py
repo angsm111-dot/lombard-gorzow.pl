@@ -82,7 +82,8 @@ class SiteTests(unittest.TestCase):
             for purity, entry in snapshot['metals'][metal]['purities'].items():
                 price = f"{entry['price']:,.2f}".replace(',', ' ').replace('.', ',')
                 self.assertIn(price + ' zł/g', source)
-            self.assertIn('disabled aria-disabled="true">Brylanty', source)
+            self.assertNotIn('Brylanty', source)
+            self.assertIn('Za biżuterię płacimy więcej niż za złom.', source)
     def test_home_summary_replaces_blog_preview(self):
         source = (ROOT / 'index.html').read_text()
         snapshot = json.loads((ROOT / 'prices-snapshot.json').read_text())
@@ -102,7 +103,7 @@ class SiteTests(unittest.TestCase):
         self.assertNotIn('class="service-links"', source)
         for name in self.pages:
             page = (ROOT / name).read_text()
-            for domain in ('obrączkigorzów.pl', 'skupzłotagorzów.pl'):
+            for domain in ('obraczkigorzow.pl', 'skupzlotagorzow.pl'):
                 self.assertIn('https://www.' + domain.encode('idna').decode(), page)
 
     def test_only_needed_scripts(self):

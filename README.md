@@ -60,7 +60,7 @@ python3 scripts/update_prices.py
 
 Polecenie pobiera i sprawdza wszystkie cztery cenniki z weryfikacją TLS, zapisuje snapshot i regeneruje HTML. Przy błędzie nie zapisuje nieprawidłowych danych. Odśwież snapshot przed wdrożeniem.
 
-W przeglądarce cennik odświeża się po otwarciu, co minutę w widocznej karcie, po powrocie do karty i przyciskiem. Podczas błędu zachowuje ostatnie ceny z datą i ostrzeżeniem o braku potwierdzenia aktualności. Bez JS przełączanie metali działa przez normalne linki HTML, a ceny są widoczne z datą pobrania. Brylanty mają nieaktywny przycisk „w budowie”, bez wymyślonych stawek.
+W przeglądarce cennik odświeża się po otwarciu, co minutę w widocznej karcie, po powrocie do karty i przyciskiem. Podczas błędu zachowuje ostatnie ceny z datą i ostrzeżeniem o braku potwierdzenia aktualności. Bez JS przełączanie metali działa przez normalne linki HTML, a ceny są widoczne z datą pobrania. Brylanty zostały usunięte. Cztery metale są wyświetlane jako równe przyciski w jednym rzędzie. Nad tabelą jest wyróżniona informacja o wyższej cenie za biżuterię niż za złom i indywidualnej wycenie.
 
 Produkcyjne API zostało odczytane przez curl z weryfikacją TLS. Bezpośredni fetch w Chromium środowiska chmurowego wcześniej blokował certyfikat lokalnego proxy (`ERR_CERT_AUTHORITY_INVALID`). Test przeglądarkowy używa prawidłowej odpowiedzi snapshotu i nie dowodzi bezpośredniego połączenia z API na hostingu JDM. Należy je zweryfikować po wdrożeniu.
 
@@ -116,4 +116,4 @@ Pierwszy ekran uproszczono: hasło, jedna linia o opłatach, niewielki blok prom
 
 Na dole głównej jest skrócony cennik złota 585 i srebra 925 z API oraz link do pełnego cennika. Podgląd bloga usunięto z głównej; blog i artykuły pozostają w osobnym menu i pod własnymi adresami. Ceny mają statyczny fallback z datą notowań.
 
-Stopka zawiera także www.obrączkigorzów.pl i www.skupzłotagorzów.pl; adresy href są zapisane w standardzie IDNA, a etykiety z polskimi znakami. Widok pośredni dużych kafelków cennika został usunięty: wejście z głównej pokazuje od razu złoto, selektor metali i tabelę cen.
+Stopka zawiera także www.obraczkigorzow.pl i www.skupzlotagorzow.pl; etykiety i adresy są bez polskich znaków, zgodnie z korektą właściciela. Widok pośredni dużych kafelków cennika został usunięty: wejście z głównej pokazuje od razu złoto, selektor metali i tabelę cen.
