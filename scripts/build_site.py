@@ -23,6 +23,7 @@ ROUTES = {'przyjmujemy': 'co-przyjmujemy.html', 'sprzedaz': 'na-sprzedaz.html', 
           'kalkulator': 'kalkulator-oplat.html', 'blog': 'blog.html', 'kontakt': 'kontakt.html',
           'wycena': 'kontakt.html#wycena', 'zasady': 'co-przyjmujemy.html'}
 PAGES = []
+CANONICAL_PATHS = {'cennik.html': 'cennik-zlota.html'}
 
 def escape(s):
     return html.escape(str(s), quote=True)
@@ -39,7 +40,8 @@ def links(fragment, prefix):
 
 def page(path, title, description, content, scripts=(), article=None):
     prefix = '../' if '/' in path else ''
-    canonical = BASE + ('/' if path == 'index.html' else '/' + path)
+    canonical_path = CANONICAL_PATHS.get(path, path)
+    canonical = BASE + ('/' if canonical_path == 'index.html' else '/' + canonical_path)
     header = links(DATA['header'], prefix)
     header = header.replace('>Cennik skupu złota</a>', '>Cennik skupu</a>').replace(f'href="{prefix}cennik-zlota.html">Cennik skupu', f'href="{prefix}cennik.html">Cennik skupu')
     header = header.replace(f'href="{prefix}{path}"', f'href="{prefix}{path}" aria-current="page"')
@@ -92,8 +94,6 @@ sales = intro('Na sprzedaż — oferty Lombardu Sezam', 'Przeglądaj aktualne pr
 sales += '<section class="reading-section"><h2>Sprawdź szczegóły przed zakupem</h2><p>Nasze ogłoszenia obejmują różne przedmioty, w tym biżuterię i elektronikę. Oferta zmienia się, dlatego przed przyjazdem na ul. Pocztową 11 w Gorzowie potwierdź dostępność interesującej Cię rzeczy.</p><p>Zapoznaj się z opisem stanu, zestawem akcesoriów i warunkami sprzedaży w ogłoszeniu. Masz pytanie o konkretny przedmiot? Prześlij nam link przez WhatsApp.</p><a class="link" href="kontakt.html">Kontakt z Lombardem Sezam →</a></section>'
 page('na-sprzedaz.html', 'Na sprzedaż — oferty OLX | Lombard Sezam Gorzów', 'Zobacz aktualne oferty Lombardu Sezam w Gorzowie na OLX. Przedmioty, zdjęcia, ceny i szczegóły ogłoszeń w jednym miejscu.', sales)
 
-metal_cards = '<div class="service-links">' + ''.join(f'<a href="{route}"><strong>Skup {name}</strong><span>Cennik za gram według próby →</span></a>' for name, label, route in METALS.values()) + '<div class="service-disabled"><strong>Brylanty</strong><span>W budowie — cennik niedostępny</span></div></div>'
-page('cennik.html', 'Cennik skupu metali szlachetnych Gorzów | Sezam', 'Wybierz cennik skupu złota, srebra, platyny lub palladu w Lombardzie Sezam w Gorzowie. Ceny za gram pochodzą ze wspólnego panelu cen.', intro('Cennik skupu metali szlachetnych', 'Wybierz metal i sprawdź ceny skupu za gram. Stawki dla poszczególnych prób są pobierane ze wspólnego cennika Sezam.') + '<section class="home-links">' + metal_cards + '</section>')
 
 stamp = datetime.fromisoformat(SNAPSHOT['fetchedAt'].replace('Z', '+00:00')).astimezone(ZoneInfo('Europe/Warsaw')).strftime('%d.%m.%Y, %H:%M')
 for key, (name, label, route) in METALS.items():
@@ -111,6 +111,9 @@ for key, (name, label, route) in METALS.items():
     content += f'<section class="metal-content" data-price-metal="{key}">{tabs}<div class="gold-prices"><table><caption>Ceny skupu {name} za 1 gram</caption><thead><tr><th scope="col">Próba</th><th scope="col">Cena za gram</th></tr></thead><tbody id="price-rows" data-has-prices="true" data-snapshot-date="{stamp}">{rows}</tbody></table><p id="price-status" class="price-note" role="status">Ostatnio pobrany cennik · notowania: {stamp} (Polska). Aktualność cen potwierdzisz telefonicznie.</p><button type="button" id="refresh-prices" class="price-refresh">Odśwież cennik</button><noscript><p>Automatyczne odświeżanie wymaga JavaScript. Powyżej widoczny jest ostatnio pobrany cennik z datą notowań.</p></noscript></div></section>'
     content += f'<section class="reading-section"><h2>Jak sprawdzić wartość {name}?</h2><p>Próba określa udział metalu szlachetnego w stopie. Cena w tabeli odnosi się już do podanej próby — nie przeliczaj jej ponownie przez zawartość metalu. Orientacyjną kwotę uzyskasz, mnożąc stawkę za gram przez masę elementów zakwalifikowanych do wyceny.</p><p>Kamienie, zapięcia i inne dodatki mogą wymagać osobnego sprawdzenia. Ostateczna wycena zależy od weryfikacji przedmiotu. Nie znasz próby? Skontaktuj się z nami przed wizytą przy ul. Pocztowej 11 w Gorzowie Wielkopolskim.</p><a class="button" href="kontakt.html">Zapytaj o wycenę →</a></section>'
     page(route, f'Skup {name} Gorzów — ceny za gram | Lombard Sezam', f'Cennik skupu {name} w Gorzowie Wielkopolskim. Ceny za gram dla poszczególnych prób z panelu Sezam. Wycena przy ul. Pocztowej 11.', content, scripts=('prices.js',))
+    if key == 'gold':
+        direct_content = content.replace('Skup złota w Gorzowie — cennik</h1>', 'Cennik skupu metali szlachetnych</h1>')
+        page('cennik.html', 'Cennik skupu metali szlachetnych Gorzów | Sezam', 'Ceny skupu złota, srebra, platyny i palladu w Gorzowie. Wybierz metal i od razu sprawdź tabelę stawek za gram z panelu Sezam.', direct_content, scripts=('prices.js',))
 
 calc = SECTIONS['kalkulator'].replace('<h2 id="fee-title">Sprawdź,<br> ile <em>zapłacisz.</em></h2>', '<h1 id="fee-title">Kalkulator opłat lombardu w Gorzowie</h1>')
 # Source may have the original line break without a following space.
@@ -127,7 +130,7 @@ for post in DATA['posts']:
     content = f'<article class="article-page"><nav class="breadcrumbs" aria-label="Ścieżka nawigacji"><a href="../index.html">Strona główna</a><span> / </span><a href="../blog.html">Blog</a></nav><header class="article-header"><div class="eyebrow">PORADNIK LOMBARDU SEZAM</div><h1>{escape(post["title"])}</h1><p>{escape(post["lead"])}</p></header><img class="article-photo" src="assets/{post["image"]}" alt="{escape(post["title"])} — ilustracja poglądowa" width="1672" height="941" fetchpriority="high"><div class="article-body">{body}<aside class="article-contact"><h2>Zapytaj w Lombardzie Sezam w Gorzowie</h2><p>Znajdziesz nas przy ul. Pocztowej 11. Opisz swój przedmiot lub zadzwoń, aby ustalić szczegóły przed wizytą.</p><a class="button" href="#kontakt">Kontakt →</a></aside></div></article>'
     page('blog/' + post['slug'] + '.html', post['title'] + ' | Lombard Sezam Gorzów', post['lead'], content, article=post)
 
-sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join('<url><loc>' + BASE + ('/' if p == 'index.html' else '/' + p) + '</loc></url>\n' for p in PAGES) + '</urlset>\n'
+sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join('<url><loc>' + BASE + ('/' if p == 'index.html' else '/' + p) + '</loc></url>\n' for p in PAGES if p not in CANONICAL_PATHS) + '</urlset>\n'
 (ROOT / 'sitemap.xml').write_text(sitemap)
 (ROOT / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: ' + BASE + '/sitemap.xml\n')
 (ROOT / 'site-manifest.json').write_text(json.dumps({'pages': PAGES}, indent=2) + '\n')

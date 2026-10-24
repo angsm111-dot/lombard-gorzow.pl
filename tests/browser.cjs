@@ -32,7 +32,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       assert.equal(await page.locator('h1').count(), 1, filename);
       const overflow = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));
       assert.ok(overflow.scroll <= width, JSON.stringify({ filename, ...overflow }));
-      if (filename.startsWith('cennik-')) {
+      if (filename.startsWith('cennik-') || filename === 'cennik.html') {
         await page.waitForSelector('#price-status[data-state="ready"]');
         const metal = await page.locator('[data-price-metal]').getAttribute('data-price-metal');
         assert.equal(await page.locator('#price-rows tr').count(), Object.keys(feed.metals[metal].purities).length);
@@ -45,7 +45,9 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       await page.locator('.mobile-navigation summary').click();
       await page.locator('#main-navigation').getByRole('link', { name: 'Cennik skupu', exact: true }).click();
       await page.waitForURL('**/cennik.html');
-      await page.getByRole('link', { name: /Skup srebra/ }).click();
+      assert.equal(await page.locator('[data-price-metal]').getAttribute('data-price-metal'), 'gold');
+      assert.equal(await page.locator('.metal-tabs').isVisible(), true);
+      await page.getByRole('navigation', { name: 'Wybierz metal' }).getByRole('link', { name: 'Srebro', exact: true }).click();
       await page.waitForURL('**/cennik-srebra.html');
       await page.getByRole('navigation', { name: 'Wybierz metal' }).getByRole('link', { name: 'Pallad', exact: true }).click();
       await page.waitForURL('**/cennik-palladu.html');

@@ -32,7 +32,7 @@ Po zmianach źródeł uruchom `python3 scripts/build_site.py`, a potem sprawdź 
 - `/` — strona główna z jasnym zdjęciem i informacją o promocji;
 - `/co-przyjmujemy.html` — złoto i srebro, telefony/laptopy, elektronarzędzia, rowery i inne przedmioty;
 - `/na-sprzedaz.html` — przycisk OLX do profilu z sezam.com.pl;
-- `/cennik.html` — wybór metalu;
+- `/cennik.html` — od razu tabela złota i małe przyciski wyboru metalu;
 - `/cennik-zlota.html`, `/cennik-srebra.html`, `/cennik-platyny.html`, `/cennik-palladu.html` — osobne cenniki z przełącznikiem metali;
 - `/kalkulator-oplat.html` — opłaty 2,5% / 15 dni i 5% / 30 dni;
 - `/kontakt.html` — adres, dojazd, telefon, WhatsApp i demonstracyjny formularz;
@@ -42,7 +42,7 @@ Po zmianach źródeł uruchom `python3 scripts/build_site.py`, a potem sprawdź 
 - `/blog/telefon-laptop-przed-sprzedaza.html`;
 - `/blog/swieta-bozego-narodzenia-2027.html`.
 
-Każda strona ma jeden H1, własny title, description i canonical. Artykuły mają pełną treść w HTML i dane strukturalne BlogPosting. `sitemap.xml` obejmuje wszystkie 15 stron, a `robots.txt` podaje jej adres. Nie ma routingu wyłącznie po hashach ani wymogu JavaScript do indeksowania treści. Rozdzielenie adresów nie gwarantuje wyższej pozycji; ważne są też jakość treści i rzeczywista publikacja.
+Każda strona ma jeden H1, własny title, description i canonical. Artykuły mają pełną treść w HTML i dane strukturalne BlogPosting. `sitemap.xml` obejmuje 14 kanonicznych adresów (wejście `/cennik.html` wskazuje kanonicznie `/cennik-zlota.html`), a `robots.txt` podaje jej adres. Nie ma routingu wyłącznie po hashach ani wymogu JavaScript do indeksowania treści. Rozdzielenie adresów nie gwarantuje wyższej pozycji; ważne są też jakość treści i rzeczywista publikacja.
 
 ## Ceny z panelu SEZAM
 
@@ -115,3 +115,5 @@ Baner: złoty zegarek z metalową bransoletą, Liść Klonowy zamiast monety z o
 Pierwszy ekran uproszczono: hasło, jedna linia o opłatach, niewielki blok promocji i dwa przyciski. Bez powielonej nazwy firmy, opisu, etykiet i paska korzyści pod banerem. Kolory zdjęcia są subtelnie stonowane przez CSS; oryginalny WebP pozostaje bez zmian.
 
 Na dole głównej jest skrócony cennik złota 585 i srebra 925 z API oraz link do pełnego cennika. Podgląd bloga usunięto z głównej; blog i artykuły pozostają w osobnym menu i pod własnymi adresami. Ceny mają statyczny fallback z datą notowań.
+
+Stopka zawiera także www.obrączkigorzów.pl i www.skupzłotagorzów.pl; adresy href są zapisane w standardzie IDNA, a etykiety z polskimi znakami. Widok pośredni dużych kafelków cennika został usunięty: wejście z głównej pokazuje od razu złoto, selektor metali i tabelę cen.

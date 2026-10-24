@@ -47,7 +47,8 @@ class SiteTests(unittest.TestCase):
                 self.assertEqual(doc.h1, 1)
                 self.assertEqual(len(doc.ids), len(set(doc.ids)))
                 self.assertEqual(len(doc.canonical), 1)
-                self.assertEqual(doc.canonical[0], 'https://lombard-gorzow.pl' + ('/' if name == 'index.html' else '/' + name))
+                canonical_name = 'cennik-zlota.html' if name == 'cennik.html' else name
+                self.assertEqual(doc.canonical[0], 'https://lombard-gorzow.pl' + ('/' if canonical_name == 'index.html' else '/' + canonical_name))
                 self.assertEqual(len(doc.description), 1)
                 self.assertTrue(doc.description[0])
                 self.assertTrue(doc.titles)
@@ -72,7 +73,7 @@ class SiteTests(unittest.TestCase):
             self.assertIn(article, self.docs['blog.html'].links)
             self.assertIn('BlogPosting', (ROOT / article).read_text())
         locations = [x.text for x in ET.parse(ROOT / 'sitemap.xml').findall('.//{*}loc')]
-        self.assertCountEqual(locations, [d.canonical[0] for d in self.docs.values()])
+        self.assertCountEqual(locations, sorted(set(d.canonical[0] for d in self.docs.values())))
     def test_all_metal_prices_exist_without_javascript(self):
         snapshot = json.loads((ROOT / 'prices-snapshot.json').read_text())
         for metal, filename in [('gold', 'cennik-zlota.html'), ('silver', 'cennik-srebra.html'), ('platinum', 'cennik-platyny.html'), ('palladium', 'cennik-palladu.html')]:
@@ -93,10 +94,21 @@ class SiteTests(unittest.TestCase):
             self.assertIn(value, source)
         self.assertIn('Pełny cennik', source)
 
+    def test_price_entry_has_table_and_footer_has_new_domains(self):
+        source = (ROOT / 'cennik.html').read_text()
+        self.assertIn('data-price-metal="gold"', source)
+        self.assertIn('aria-label="Wybierz metal"', source)
+        self.assertIn('id="price-rows"', source)
+        self.assertNotIn('class="service-links"', source)
+        for name in self.pages:
+            page = (ROOT / name).read_text()
+            for domain in ('obrączkigorzów.pl', 'skupzłotagorzów.pl'):
+                self.assertIn('https://www.' + domain.encode('idna').decode(), page)
+
     def test_only_needed_scripts(self):
         for name, doc in self.docs.items():
             js = [urlsplit(a).path for a in doc.assets if '.js' in a]
-            self.assertEqual('prices.js' in js, name.startswith('cennik-'))
+            self.assertEqual('prices.js' in js, name.startswith('cennik-') or name == 'cennik.html')
             self.assertEqual('calculator.js' in js, name == 'kalkulator-oplat.html')
             self.assertEqual('home-prices.js' in js, name == 'index.html')
 
