@@ -104,3 +104,7 @@ python3 scripts/export.py
 Wynik: `dist/lombard-gorzow.zip`. To kompletna wielostronicowa witryna, a nie pojedynczy plik HTML. Archiwum obejmuje wszystkie podstrony, używane grafiki, CSS, JS, mapę witryny, robots.txt i `.htaccess`, bez plików źródłowych panelu czy sekretów. Rozpakuj i otwórz przez lokalny serwer albo wgraj zawartość do katalogu domeny na hostingu.
 
 Przed wdrożeniem: kopia istniejącej strony JDM, zachowanie ustawień poczty, potwierdzenie API, uzupełnienie godzin otwarcia oraz podłączenie obsługi formularza i informacji o przetwarzaniu danych. Formularz obecnie niczego nie wysyła. Strona nie została opublikowana przez zapis do repozytorium.
+
+## Podgląd GitHub Pages
+
+Gałąź `gh-pages` zawiera gotową kopię statycznej witryny do podglądu, z `noindex` i `.nojekyll`. Nie zmienia domeny lombard-gorzow.pl ani strony na JDM. Aby ją udostępnić, w GitHub → Settings → Pages wybierz „Deploy from a branch”, gałąź `gh-pages`, katalog `/(root)` i zapisz. Oczekiwany adres po zakończeniu wdrożenia: https://angsm111-dot.github.io/lombard-gorzow.pl/ . Samo wysłanie gałęzi nie potwierdza aktywacji Pages; konfiguracja przez GitHub API była blokowana przez sieć środowiska. Kolejne zmiany main wymagają odświeżenia kopii na gh-pages; nie ma automatycznej synchronizacji.
