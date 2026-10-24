@@ -82,10 +82,22 @@ class SiteTests(unittest.TestCase):
                 price = f"{entry['price']:,.2f}".replace(',', ' ').replace('.', ',')
                 self.assertIn(price + ' zł/g', source)
             self.assertIn('disabled aria-disabled="true">Brylanty', source)
+    def test_home_summary_replaces_blog_preview(self):
+        source = (ROOT / 'index.html').read_text()
+        snapshot = json.loads((ROOT / 'prices-snapshot.json').read_text())
+        self.assertNotIn('class="blog-card"', source)
+        self.assertIn('data-summary-price="gold"', source)
+        self.assertIn('data-summary-price="silver"', source)
+        for metal, purity in [('gold', '585'), ('silver', '925')]:
+            value = f"{snapshot['metals'][metal]['purities'][purity]['price']:,.2f}".replace(',', ' ').replace('.', ',')
+            self.assertIn(value, source)
+        self.assertIn('Pełny cennik', source)
+
     def test_only_needed_scripts(self):
         for name, doc in self.docs.items():
             js = [urlsplit(a).path for a in doc.assets if '.js' in a]
             self.assertEqual('prices.js' in js, name.startswith('cennik-'))
             self.assertEqual('calculator.js' in js, name == 'kalkulator-oplat.html')
+            self.assertEqual('home-prices.js' in js, name == 'index.html')
 
 if __name__ == '__main__': unittest.main()

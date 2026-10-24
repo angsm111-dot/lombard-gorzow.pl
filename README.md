@@ -21,6 +21,7 @@ Python jest potrzebny tylko do lokalnego serwera i generowania plików. Hosting 
 - `app.js`: tylko wspólne menu i demonstracyjny formularz.
 - `calculator.js`: kalkulator opłat, ładowany wyłącznie na stronie kalkulatora.
 - `prices.js`: odczyt publicznych cen, ładowany wyłącznie w czterech cennikach.
+- `home-prices.js`: lekki skrót cen złota 585 i srebra 925 wyłącznie na głównej.
 - `prices-snapshot.json`: ostatnio pobrane rzeczywiste ceny wszystkich metali z datą notowań.
 - `assets/`: lokalne WebP i logo PNG. Zdjęcia są fotorealistycznymi ilustracjami AI, nie dokumentacją produktów czy lokalu firmy.
 
@@ -75,7 +76,7 @@ Logo: https://sezam.com.pl/wp-content/uploads/2021/04/SezamLombard_logoRGB-1.png
 
 ## Szybkość
 
-Brak zewnętrznych fontów, bibliotek UI, trackerów i frameworka. Wspólne CSS/JS są współdzielone między podstronami. Wersje skryptów i CSS są oznaczone skrótem zawartości. Zdjęcia mają wymiary i WebP; te niżej na stronie są ładowane leniwie. Cena jest pobierana tylko na cenniku, nie na głównej i w artykułach. `.htaccess` zawiera opcjonalną kompresję i cache dla Apache/LiteSpeed. Ostateczna szybkość zależy również od konfiguracji JDM i wymaga pomiaru po publikacji.
+Brak zewnętrznych fontów, bibliotek UI, trackerów i frameworka. Wspólne CSS/JS są współdzielone między podstronami. Wersje skryptów i CSS są oznaczone skrótem zawartości. Zdjęcia mają wymiary i WebP; te niżej na stronie są ładowane leniwie. Pełne cenniki mają osobny skrypt; główna pobiera jedną odpowiedź API do dwóch skróconych cen. Artykuły i inne strony nie pobierają cen. `.htaccess` zawiera opcjonalną kompresję i cache dla Apache/LiteSpeed. Ostateczna szybkość zależy również od konfiguracji JDM i wymaga pomiaru po publikacji.
 
 ## Kontrole
 
@@ -112,3 +113,5 @@ Gałąź `gh-pages` zawiera gotową kopię statycznej witryny do podglądu, z `n
 Baner: złoty zegarek z metalową bransoletą, Liść Klonowy zamiast monety z orłem i dwa łańcuszki. Generator wersjonuje także obrazy skrótem zawartości, aby nowy baner nie pozostawał w pamięci podręcznej przeglądarki.
 
 Pierwszy ekran uproszczono: hasło, jedna linia o opłatach, niewielki blok promocji i dwa przyciski. Bez powielonej nazwy firmy, opisu, etykiet i paska korzyści pod banerem. Kolory zdjęcia są subtelnie stonowane przez CSS; oryginalny WebP pozostaje bez zmian.
+
+Na dole głównej jest skrócony cennik złota 585 i srebra 925 z API oraz link do pełnego cennika. Podgląd bloga usunięto z głównej; blog i artykuły pozostają w osobnym menu i pod własnymi adresami. Ceny mają statyczny fallback z datą notowań.

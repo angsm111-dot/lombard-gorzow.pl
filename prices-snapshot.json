@@ -1,52 +1,52 @@
 {
   "source": "https://skup-zlota-gorzow.angsm111.workers.dev/api/prices",
-  "fetchedAt": "2026-10-24T11:00:19.603Z",
-  "savedAt": "2026-10-24T11:02:29.371699+00:00",
+  "fetchedAt": "2026-10-24T16:05:22.667Z",
+  "savedAt": "2026-10-24T16:07:10.392487+00:00",
   "metals": {
     "gold": {
       "purities": {
         "333": {
-          "price": 117.69,
+          "price": 117.68,
           "margin": 30,
           "mode": "auto"
         },
         "375": {
-          "price": 160.94,
+          "price": 160.92,
           "margin": 15,
           "mode": "auto"
         },
         "500": {
-          "price": 214.59,
+          "price": 214.56,
           "margin": 15,
           "mode": "auto"
         },
         "585": {
-          "price": 251.06,
+          "price": 251.03,
           "margin": 15,
           "mode": "auto"
         },
         "750": {
-          "price": 321.88,
+          "price": 321.84,
           "margin": 15,
           "mode": "auto"
         },
         "916": {
-          "price": 393.12,
+          "price": 393.07,
           "margin": 15,
           "mode": "auto"
         },
         "960": {
-          "price": 412,
+          "price": 411.95,
           "margin": 15,
           "mode": "auto"
         },
         "986": {
-          "price": 460.5,
+          "price": 460.44,
           "margin": 7.5,
           "mode": "auto"
         },
         "999": {
-          "price": 428.74,
+          "price": 428.69,
           "margin": 15,
           "mode": "auto"
         }
@@ -80,7 +80,7 @@
           "mode": "auto"
         },
         "900": {
-          "price": 3.06,
+          "price": 3.07,
           "margin": 50,
           "mode": "auto"
         },

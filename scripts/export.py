@@ -13,7 +13,7 @@ output = Path(sys.argv[1]) if len(sys.argv) > 1 else root / 'dist' / 'lombard-go
 if output.suffix != '.zip':
     raise SystemExit('The project has multiple pages. Choose a .zip output, not a single .html file.')
 pages = json.loads((root / 'site-manifest.json').read_text())['pages']
-files = set(pages + ['style.css', 'app.js', 'calculator.js', 'prices.js', 'sitemap.xml', 'robots.txt', '.htaccess'])
+files = set(pages + ['style.css', 'app.js', 'calculator.js', 'prices.js', 'home-prices.js', 'sitemap.xml', 'robots.txt', '.htaccess'])
 for page in pages:
     for asset in re.findall(r'src="(?:\.\./)?(assets/[^"?]+)', (root / page).read_text()):
         files.add(asset)
