@@ -96,3 +96,19 @@ footer{background:var(--forest);border-top:2px solid var(--gold)}footer .logo{co
 @media(max-width:450px){.hero-photo-layout .hero-shade{background:linear-gradient(180deg,transparent 0,transparent 115px,#faf6ed44 175px,#faf6ede6 255px,#faf6ed 310px)}.hero .hero-title{font-size:clamp(29px,8vw,36px);line-height:1.15;letter-spacing:-1px}.hero.hero-photo-layout .promo-heading{background:#fffdf8;border-color:#d7c6af}}
 
 .hero-title-main,.hero-title-local{display:block}.hero .hero-title-local{font:normal clamp(19px,2.05vw,29px)/1.4 Georgia,serif;letter-spacing:-.3px;white-space:nowrap;margin-top:10px}@media(max-width:900px){.hero .hero-title-local{font-size:clamp(17px,3.85vw,29px)}}@media(max-width:450px){.hero .hero-title-local{font-size:clamp(14px,3.85vw,17.3px);letter-spacing:-.2px;line-height:1.4;margin-top:9px}.hero .hero-title-main{font-size:clamp(27px,7.7vw,35px)}}
+
+/* Lżejszy kadr: przedmioty wyżej, miękkie przejście w krem z obu stron. */
+.hero-photo-layout .hero-background{filter:brightness(1.13) saturate(1.15) contrast(1.02)}
+.hero.hero-photo-layout{margin-top:0}
+@media(max-width:900px){
+ #gora{border-bottom-color:transparent;background:#faf6ed}
+ .hero-photo-layout .hero-background{height:305px;object-position:70% 88%}
+ .hero-photo-layout .hero-shade{background:linear-gradient(180deg,#faf6ed 0px,#faf6edb3 20px,#faf6ed26 55px,transparent 90px,transparent 135px,#faf6ed66 185px,#faf6ede8 245px,#faf6ed 305px)}
+ .hero.hero-photo-layout{padding-top:225px}
+}
+@media(max-width:450px){
+ .hero-photo-layout .hero-background{height:285px;object-position:70% 96%}
+ .hero-photo-layout .hero-shade{background:linear-gradient(180deg,#faf6ed 0px,#faf6edb3 18px,#faf6ed26 48px,transparent 78px,transparent 125px,#faf6ed80 180px,#faf6edf0 235px,#faf6ed 285px)}
+ .hero.hero-photo-layout{padding-top:220px}
+}
+@media(min-width:901px){.hero-photo-layout .hero-shade{background:linear-gradient(180deg,#faf6edbb 0,transparent 65px,transparent 85%,#faf6ed77 100%),linear-gradient(90deg,#faf6edf8 0%,#faf6edf0 33%,#faf6ed88 62%,#faf6ed08 100%)}}
