@@ -59,7 +59,7 @@ Testy w Chromium/Playwright: kalkulator (15/30 dni, zakres, grosze, niepoprawne 
 2. Uzupełnić godziny otwarcia. Adres z sezam.com.pl: ul. Pocztowa 11, 66-400 Gorzów Wielkopolski.
 3. Podłączyć obsługę formularza wyceny i informacje o przetwarzaniu danych. Obecnie formularz jest demonstracyjny i nie wysyła danych.
 4. W razie potrzeby potwierdzić profil OLX: https://www.olx.pl/oferty/uzytkownik/G2XGE/ pochodzi z https://sezam.com.pl/oferta-olx-allegro/. Właściciel odłożył podanie linku na później.
-5. Sprawdzić wersję mobilną — właściciel prosił na razie o skupienie się na komputerowej.
+5. Przed publikacją obejrzeć wersję mobilną na rzeczywistych urządzeniach. Menu mobilne i responsywność zweryfikowano w Chromium dla 320, 360, 390, 430, 600, 768, 900, 1024 i 1440 px.
 6. Ustalić sposób wdrożenia na JDM, wykonać kopię obecnej strony i zachować konfigurację poczty przed podmianą. Strona nie została opublikowana.
 
 ## Grafiki
@@ -77,3 +77,7 @@ Kontakt zawiera osobne przyciski WhatsApp i „Zadzwoń” (`tel:+48601775146`).
 ## Zdjęcia poglądowe
 
 Artykuły blogowe i sekcja przyjmowanych przedmiotów mają zdjęcia nagłówkowe. Dodatkowy kadr prezentuje wycenę biżuterii. Grafiki w `assets/blog-*.webp` oraz `assets/wycena-bizuterii.webp` są wygenerowanymi fotorealistycznymi ilustracjami, nie dokumentują lokalu, pracowników ani produktów firmy. Obrazy mają teksty alternatywne i leniwe ładowanie.
+
+## Nawigacja mobilna
+
+Do 900 px: przycisk z ikoną i napisem „Menu”, atrybuty aria-expanded i aria-controls, zamykanie po wyborze odnośnika, kliknięciu poza nagłówkiem i Escape (z przywróceniem fokusu). Bez JavaScript odnośniki pozostają widoczne. Powyżej 900 px standardowe menu. Układ zdjęć, kalkulatora, bloga i kontaktu dostosowany do mniejszych ekranów.
