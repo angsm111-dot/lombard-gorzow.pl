@@ -77,3 +77,5 @@ footer{background:var(--forest);border-top:2px solid var(--gold)}footer .logo{co
 .hero .copy>.promo-claim{margin:0 0 22px;font-size:22px;line-height:1.5;text-align:center;color:var(--burgundy)}.promo-claim strong{font-weight:800}@media(max-width:450px){.hero .copy>.promo-claim{font-size:18px;line-height:1.55;margin-bottom:20px}}
 
 .hero .actions{flex-wrap:wrap}.hero .actions .gold-cta{background:#e9dcc5;color:#473b2c;border:1px solid #b9a184}.hero .actions .gold-cta:hover{background:#dfccab}.hero .actions>.link{flex-basis:100%;width:fit-content;flex-grow:0;justify-self:start;max-width:fit-content}@media(max-width:450px){.hero .actions{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:16px 10px;align-items:stretch}.hero .actions>.button{padding:14px 10px;font-size:11px;gap:8px;line-height:1.5;min-height:48px}.hero .actions>.link{grid-column:1/-1;font-size:11px}}
+
+.accepted-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.accepted-card:nth-child(4){background:#eee7df;border-color:#d9cbbb;border-top-color:#94795c}.accepted-card:nth-child(4) h3{margin-top:25px}@media(max-width:900px){.accepted-grid{grid-template-columns:1fr}}
