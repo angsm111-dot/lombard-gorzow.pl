@@ -122,28 +122,19 @@ document.querySelectorAll('[data-fee-amount]').forEach(button => button.addEvent
 calculateFee();
 
 
-// Nawigacja mobilna: działa jako zwykły spis linków, również bez JavaScript.
-const menuToggle = document.querySelector('.menu-toggle');
-const mainNavigation = document.querySelector('#main-navigation');
-const mobileNavigation = window.matchMedia('(max-width: 900px)');
+// Natywne details/summary otwiera menu także przy wyłączonym JavaScript.
+const mobileMenu = document.querySelector('.mobile-navigation');
 function closeMobileMenu(restoreFocus = false) {
-  menuToggle.setAttribute('aria-expanded', 'false');
-  mainNavigation.classList.remove('is-open');
-  if (restoreFocus) menuToggle.focus();
+  mobileMenu.open = false;
+  if (restoreFocus) mobileMenu.querySelector('summary').focus();
 }
-menuToggle.addEventListener('click', () => {
-  const open = menuToggle.getAttribute('aria-expanded') !== 'true';
-  menuToggle.setAttribute('aria-expanded', String(open));
-  mainNavigation.classList.toggle('is-open', open);
-});
-mainNavigation.addEventListener('click', event => {
+mobileMenu.querySelector('nav').addEventListener('click', event => {
   if (event.target.closest('a')) closeMobileMenu();
 });
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') closeMobileMenu(true);
+  if (event.key === 'Escape' && mobileMenu.open) closeMobileMenu(true);
 });
 document.addEventListener('click', event => {
-  if (!event.target.closest('#gora')) closeMobileMenu();
+  if (!mobileMenu.contains(event.target)) closeMobileMenu();
 });
-mobileNavigation.addEventListener('change', () => closeMobileMenu());
-document.documentElement.classList.add('nav-enhanced');
+window.matchMedia('(max-width: 900px)').addEventListener('change', () => closeMobileMenu());

@@ -58,3 +58,12 @@ footer{background:var(--forest);border-top:2px solid var(--gold)}footer .logo{co
 @media(max-width:450px){
  .brand-sezam img{width:180px}.menu-toggle{padding:10px 12px;font-size:13px}.hero .promo-heading{font-size:clamp(38px,10.8vw,48px);letter-spacing:-1.6px}.hero .art{height:360px}.hero .copy>p br{display:none}.hero .copy>.promo-claim{font-size:18px}.hero .trust{gap:14px;font-size:10px}.hero .actions{align-items:flex-start;flex-direction:column;gap:20px}.hero .art-bottom{font-size:23px}.fee-calculator{padding:22px 18px}.fee-periods{gap:8px;flex-wrap:wrap}.fee-periods label{min-height:46px;font-size:12px;padding:10px}.fee-cost{flex-wrap:wrap;gap:10px}.fee-total{flex-wrap:wrap;gap:10px}.fee-presets button{min-height:40px;font-size:11px}.fee-presets{gap:8px}.accepted-photo{height:210px}.blog-photo{height:210px}.valuation{padding:25px 20px;gap:22px}.valuation-story>img{height:230px}.story-copy{padding:27px 23px}.whatsapp-card{padding:24px}.whatsapp-card .whatsapp-button,.whatsapp-card .call-button{width:100%;padding:15px 12px}.gold-prices{padding-inline:18px}.contact-address .directions-button{min-height:46px}.price-refresh{min-height:44px}.blog-card summary{min-height:48px}.footer-sites nav{gap:16px}.top{gap:12px;align-items:center}.top>span{line-height:1.5}
 }
+
+/* Menu natywne: podgląd pobranego HTML nie musi uruchamiać JavaScript. */
+.mobile-navigation{display:none}.menu-toggle{list-style:none;cursor:pointer;user-select:none}.menu-toggle::-webkit-details-marker{display:none}.menu-toggle::marker{content:''}
+@media(max-width:900px){
+ header{position:relative;align-items:center}#desktop-navigation{display:none!important}.mobile-navigation{display:block;margin-left:auto;flex:0 0 auto;order:2;position:static}.mobile-navigation>.menu-toggle{display:flex}.mobile-navigation[open]>.menu-toggle{background:var(--forest);color:#fff}
+ .mobile-navigation #main-navigation{position:absolute;z-index:20;top:calc(100% - 6px);left:5.5%;right:5.5%;width:auto;margin:0;box-shadow:0 14px 28px #25334b24;padding:7px 16px}
+ .mobile-navigation:not([open]) #main-navigation{display:none!important}.mobile-navigation[open] #main-navigation{display:flex!important}
+}
+@media(min-width:901px){#desktop-navigation{display:flex}.mobile-navigation{display:none!important}}

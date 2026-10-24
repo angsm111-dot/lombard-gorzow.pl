@@ -80,4 +80,6 @@ Artykuły blogowe i sekcja przyjmowanych przedmiotów mają zdjęcia nagłówkow
 
 ## Nawigacja mobilna
 
-Do 900 px: przycisk z ikoną i napisem „Menu”, atrybuty aria-expanded i aria-controls, zamykanie po wyborze odnośnika, kliknięciu poza nagłówkiem i Escape (z przywróceniem fokusu). Bez JavaScript odnośniki pozostają widoczne. Powyżej 900 px standardowe menu. Układ zdjęć, kalkulatora, bloga i kontaktu dostosowany do mniejszych ekranów.
+Do 900 px: przycisk z ikoną i napisem „Menu”, atrybuty aria-expanded i aria-controls, zamykanie po wyborze odnośnika, kliknięciu poza nagłówkiem i Escape (z przywróceniem fokusu). Menu oparto na natywnym details/summary: także bez JavaScript jest domyślnie zwinięte i otwiera się po kliknięciu „Menu”, również w podglądzie pobranego HTML. Powyżej 900 px standardowe menu. Układ zdjęć, kalkulatora, bloga i kontaktu dostosowany do mniejszych ekranów.
+
+Poprawka podglądu mobilnego: menu korzysta z natywnego HTML details/summary, a nie ze skryptu wymagającego aktywnego JS. Sprawdzono także w ramce sandbox bez allow-scripts.
