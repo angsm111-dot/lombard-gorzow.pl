@@ -34,7 +34,7 @@ def links(fragment, prefix):
     for anchor, route in ROUTES.items():
         fragment = fragment.replace(f'href="#{anchor}"', f'href="{prefix}{route}"')
     fragment = fragment.replace('href="#"', f'href="{prefix}index.html"')
-    fragment = re.sub(r'(src=")assets/', lambda m: m[1] + prefix + 'assets/', fragment)
+    fragment = re.sub(r'src="(assets/[^"?]+)"', lambda m: f'src="{prefix}{m[1]}?v={revision(m[1])}"', fragment)
     return fragment
 
 def page(path, title, description, content, scripts=(), article=None):
