@@ -85,3 +85,5 @@ Do 900 px: przycisk z ikoną i napisem „Menu”, atrybuty aria-expanded i aria
 Poprawka podglądu mobilnego: menu korzysta z natywnego HTML details/summary, a nie ze skryptu wymagającego aktywnego JS. Sprawdzono także w ramce sandbox bez allow-scripts.
 
 Kalkulator mobilny: domyślnie 15 dni / 2,5%. Wynik znajduje się tuż pod kwotą i przełącznikiem okresu. W podglądzie blokującym JavaScript zamiast statycznego wyniku jest informacja o otwarciu w przeglądarce. Natywne menu działa również bez JS, ale dynamiczne obliczenia wymagają JS.
+
+Sekcja „Co przyjmujemy”: dokładnie trzy ilustrowane kategorie, w kolejności Złoto i srebro (biżuteria, moneta, sztabka), Telefony i laptopy, Elektronarzędzia (wiertarko-wkrętarka i szlifierka). Obrazy skup-zlota-srebra.webp i elektronarzedzia.webp są wygenerowanymi grafikami poglądowymi.
