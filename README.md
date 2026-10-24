@@ -88,4 +88,6 @@ Kalkulator mobilny: domyślnie 15 dni / 2,5%. Wynik znajduje się tuż pod kwot�
 
 Sekcja „Co przyjmujemy”: dokładnie trzy ilustrowane kategorie, w kolejności Złoto i srebro (biżuteria, moneta, sztabka), Telefony i laptopy, Elektronarzędzia (wiertarko-wkrętarka i szlifierka). Obrazy skup-zlota-srebra.webp i elektronarzedzia.webp są wygenerowanymi grafikami poglądowymi.
 
-Pierwszy ekran: fotograficzne tło z gotówką, telefonem i biżuterią (`assets/lombard-gotowka.webp`, grafika poglądowa AI), hasło „Pożyczki pod zastaw na najlepszych warunkach”, mniejszy blok promocji 5% za miesiąc / 30 dni. Na mobile fotografia jest widoczna nad treścią, a kontrast ciemnego tekstu zapewnia jasna kremowa nakładka.
+Pierwszy ekran: fotograficzne tło z gotówką, telefonem i biżuterią (`assets/lombard-gotowka.webp`, grafika poglądowa AI), hasło „Pożyczki pod zastaw na najlepszych warunkach w Gorzowie”, mniejszy blok promocji 5% za miesiąc / 30 dni. Na mobile fotografia jest widoczna nad treścią, a kontrast ciemnego tekstu zapewnia jasna kremowa nakładka.
+
+Slogan lokalny „na najlepszych warunkach w Gorzowie” pozostaje w jednej linii przy szerokościach 320–1440 px. Zdjęcie pierwszego ekranu zawiera również obrączkę, zegarek i złoty łańcuszek na banknotach.
