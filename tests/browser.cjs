@@ -13,7 +13,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
   const errors = [], failures = [];
   let failFeed = false;
   let requests = 0;
-  const feed = { status: 'ok', fetchedAt: snapshot.fetchedAt, metals: structuredClone(snapshot.metals) };
+  const feed = { status: 'ok', fetchedAt: snapshot.fetchedAt, metals: structuredClone(snapshot.metals), products: structuredClone(snapshot.products) };
   await context.route('**/api/prices', async route => {
     requests++;
     if (failFeed) return route.fulfill({ status: 503, body: 'Unavailable', headers: { 'access-control-allow-origin': '*' } });
@@ -32,7 +32,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       assert.equal(await page.locator('h1').count(), 1, filename);
       const overflow = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));
       assert.ok(overflow.scroll <= width, JSON.stringify({ filename, ...overflow }));
-      if (filename.startsWith('cennik-') || filename === 'cennik.html') {
+      if (filename.startsWith('cennik-') || filename.startsWith('monety-') || filename.startsWith('sztabki-') || filename === 'cennik.html') {
         await page.waitForSelector('#price-status[data-state="ready"]');
         const metal = await page.locator('[data-price-metal]').getAttribute('data-price-metal');
         assert.equal(await page.locator('#price-rows tr').count(), Object.keys(feed.metals[metal].purities).length);
@@ -75,7 +75,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       assert.ok((await page.locator('.article-body').innerText()).length > 1000);
     }
     await page.close();
-    console.log('PASS all 15 pages, width', width);
+    console.log('PASS all pages, width', width);
   }
   const noJS = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await noJS.newPage();

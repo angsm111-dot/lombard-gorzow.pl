@@ -45,7 +45,7 @@ def page(path, title, description, content, scripts=(), article=None):
     header = links(DATA['header'], prefix)
     header = header.replace('>Cennik skupu złota</a>', '>Cennik skupu</a>').replace(f'href="{prefix}cennik-zlota.html">Cennik skupu', f'href="{prefix}cennik.html">Cennik skupu')
     header = header.replace(f'href="{prefix}{path}"', f'href="{prefix}{path}" aria-current="page"')
-    if path.startswith('cennik-'):
+    if path.startswith(('cennik-', 'monety-', 'sztabki-')):
         header = header.replace(f'href="{prefix}cennik.html"', f'href="{prefix}cennik.html" aria-current="page"')
     schemas = [{'@context': 'https://schema.org', '@type': 'WebSite', 'name': 'Lombard Sezam', 'url': BASE + '/'}]
     if article:
@@ -95,25 +95,91 @@ sales += '<section class="reading-section"><h2>Sprawdź szczegóły przed zakupe
 page('na-sprzedaz.html', 'Na sprzedaż — oferty OLX | Lombard Sezam Gorzów', 'Zobacz aktualne oferty Lombardu Sezam w Gorzowie na OLX. Przedmioty, zdjęcia, ceny i szczegóły ogłoszeń w jednym miejscu.', sales)
 
 
+# Each view has a real, crawlable URL. JS progressively enhances the same links.
+PRODUCT_ROUTES = {
+    ('gold', 'coins'): 'monety-zlote.html', ('gold', 'bars'): 'sztabki-zlote.html',
+    ('silver', 'coins'): 'monety-srebrne.html', ('silver', 'bars'): 'sztabki-srebrne.html',
+}
+VIEWS = {}
+for metal, (name, label, route) in METALS.items():
+    for kind in (('purity', 'coins', 'bars') if metal in ('gold', 'silver') else ('purity',)):
+        if kind == 'purity':
+            view = {'metal': metal, 'kind': kind, 'route': route,
+                    'title': f'Skup {name} Gorzów — ceny za gram | Lombard Sezam',
+                    'description': f'Cennik skupu {name} w Gorzowie Wielkopolskim. Ceny za gram dla poszczególnych prób z panelu Sezam. Wycena przy ul. Pocztowej 11.',
+                    'heading': f'Skup {name} w Gorzowie — cennik',
+                    'intro': f'Sprawdź ceny skupu {name} według próby. Kwoty podano w złotych za jeden gram metalu.',
+                    'caption': f'Ceny skupu {name} za 1 gram',
+                    'readingTitle': f'Jak sprawdzić wartość {name}?',
+                    'reading': ['Próba określa udział metalu szlachetnego w stopie. Cena w tabeli odnosi się już do podanej próby — nie przeliczaj jej ponownie przez zawartość metalu. Orientacyjną kwotę uzyskasz, mnożąc stawkę za gram przez masę elementów zakwalifikowanych do wyceny.', 'Kamienie, zapięcia i inne dodatki mogą wymagać osobnego sprawdzenia. Ostateczna wycena zależy od weryfikacji przedmiotu. Nie znasz próby? Skontaktuj się z nami przed wizytą przy ul. Pocztowej 11 w Gorzowie Wielkopolskim.']}
+        else:
+            adjective = 'złotych' if metal == 'gold' else 'srebrnych'
+            noun = ('monet ' if kind == 'coins' else 'sztabek ') + adjective
+            view = {'metal': metal, 'kind': kind, 'route': PRODUCT_ROUTES[(metal, kind)],
+                    'title': f'Skup {noun} Gorzów — ceny za sztukę | Sezam',
+                    'description': f'Cennik skupu {noun} w Gorzowie. Wybierz nazwę i masę produktu, sprawdź cenę za sztukę oraz zapytaj o wycenę w Lombardzie Sezam.',
+                    'heading': f'Skup {noun} w Gorzowie',
+                    'intro': 'Wybierz nazwę i masę produktu. Podane ceny dotyczą jednej sztuki, nie jednego grama.',
+                    'caption': f'Ceny skupu {noun}',
+                    'readingTitle': 'Jak odczytać cenę za monetę lub sztabkę?',
+                    'reading': ['Znajdź dokładną nazwę produktu i jego masę. Przykładowo moneta jednouncjowa i moneta o masie 1/10 uncji mają osobne stawki. Cena na liście dotyczy całej jednej sztuki — nie mnożymy jej ponownie przez wagę ani próbę.', 'Nie widzisz swojej monety lub sztabki? Skontaktuj się z nami. Ostateczną wycenę potwierdzimy po sprawdzeniu autentyczności, stanu i parametrów przedmiotu. Znajdziesz nas przy ul. Pocztowej 11 w Gorzowie Wielkopolskim.']}
+        VIEWS[metal + '/' + kind] = view
+
+
+def product_group(metal, kind):
+    return metal + ('Coins' if kind == 'coins' else 'Bars')
+
+
+def product_list_html(items):
+    rows = []
+    for item in items:
+        if item.get('active') is False:
+            continue
+        price = f"{item['price']:,.2f}".replace(',', ' ').replace('.', ',')
+        mass = f"{item['grossWeight']:g}".replace('.', ',')
+        purity = f"{item['purity']:g}".replace('.', ',')
+        rows.append(f'<article class="product-price-row" role="listitem" data-product-id="{escape(item["id"])}"><div><h3>{escape(item["name"])}</h3><p>{mass} g · próba {purity}</p></div><p class="product-buy-price"><strong>{price} zł</strong><small>za 1 sztukę</small></p></article>')
+    return ''.join(rows)
+
+
 stamp = datetime.fromisoformat(SNAPSHOT['fetchedAt'].replace('Z', '+00:00')).astimezone(ZoneInfo('Europe/Warsaw')).strftime('%d.%m.%Y, %H:%M')
-for key, (name, label, route) in METALS.items():
+for view in VIEWS.values():
+    metal, kind = view['metal'], view['kind']
     tab_links = []
-    for tab_key, (_, tab_label, tab_route) in METALS.items():
-        current = ' aria-current="page"' if tab_key == key else ''
-        tab_links.append(f'<a href="{tab_route}"{current}>{tab_label}</a>')
+    for tab_metal, (_, label, route) in METALS.items():
+        tab_kind = kind if tab_metal in ('gold', 'silver') else 'purity'
+        target = VIEWS[tab_metal + '/' + tab_kind]['route']
+        current = ' aria-current="page"' if tab_metal == metal else ''
+        tab_links.append(f'<a data-metal="{tab_metal}" href="{target}"{current}>{label}</a>')
     tabs = '<nav class="metal-tabs" aria-label="Wybierz metal">' + ''.join(tab_links) + '</nav>'
+    kind_links = []
+    for candidate, label in [('purity', 'Według próby'), ('coins', 'Monety'), ('bars', 'Sztabki')]:
+        if metal not in ('gold', 'silver'):
+            continue
+        current = ' aria-current="page"' if candidate == kind else ''
+        target = VIEWS[metal + '/' + candidate]['route']
+        kind_links.append(f'<a data-kind="{candidate}" href="{target}"{current}>{label}</a>')
+    kind_tabs = '<nav class="kind-tabs" aria-label="Rodzaj cennika"' + (' hidden' if not kind_links else '') + '>' + ''.join(kind_links) + '</nav>'
     rows = ''
-    for purity, item in sorted(SNAPSHOT['metals'][key]['purities'].items(), key=lambda p: int(p[0])):
+    for purity, item in sorted(SNAPSHOT['metals'][metal]['purities'].items(), key=lambda pair: int(pair[0])):
         price = f"{item['price']:,.2f}".replace(',', ' ').replace('.', ',')
         fraction = f'{int(purity) / 10:g}'.replace('.', ',')
         rows += f'<tr><th scope="row">{purity} <span>{fraction}% metalu</span></th><td>{price} zł/g</td></tr>'
-    content = intro(f'Skup {name} w Gorzowie — cennik', f'Sprawdź ceny skupu {name} według próby. Kwoty podano w złotych za jeden gram metalu. Podane stawki uwzględniają ustawienia cennika Sezam.')
-    content += f'<section class="metal-content" data-price-metal="{key}">{tabs}<aside class="jewelry-premium" aria-label="Indywidualna wycena biżuterii"><p><strong>Za biżuterię płacimy więcej niż za złom.</strong> Wyceniamy ją indywidualnie.</p></aside><div class="gold-prices"><table><caption>Ceny skupu {name} za 1 gram</caption><thead><tr><th scope="col">Próba</th><th scope="col">Cena za gram</th></tr></thead><tbody id="price-rows" data-has-prices="true" data-snapshot-date="{stamp}">{rows}</tbody></table><p id="price-status" class="price-note" role="status">Ostatnio pobrany cennik · notowania: {stamp} (Polska). Aktualność cen potwierdzisz telefonicznie.</p><button type="button" id="refresh-prices" class="price-refresh">Odśwież cennik</button><noscript><p>Automatyczne odświeżanie wymaga JavaScript. Powyżej widoczny jest ostatnio pobrany cennik z datą notowań.</p></noscript></div></section>'
-    content += f'<section class="reading-section"><h2>Jak sprawdzić wartość {name}?</h2><p>Próba określa udział metalu szlachetnego w stopie. Cena w tabeli odnosi się już do podanej próby — nie przeliczaj jej ponownie przez zawartość metalu. Orientacyjną kwotę uzyskasz, mnożąc stawkę za gram przez masę elementów zakwalifikowanych do wyceny.</p><p>Kamienie, zapięcia i inne dodatki mogą wymagać osobnego sprawdzenia. Ostateczna wycena zależy od weryfikacji przedmiotu. Nie znasz próby? Skontaktuj się z nami przed wizytą przy ul. Pocztowej 11 w Gorzowie Wielkopolskim.</p><a class="button" href="kontakt.html">Zapytaj o wycenę →</a></section>'
-    switch_data = json.dumps({'fetchedAt': SNAPSHOT['fetchedAt'], 'metals': SNAPSHOT['metals']}, ensure_ascii=False)
+    products = SNAPSHOT.get('products', {}).get(product_group(metal, kind), []) if kind != 'purity' else []
+    product_rows = product_list_html(products)
+    table_hidden = ' hidden' if kind != 'purity' else ''
+    product_hidden = ' hidden' if kind == 'purity' else ''
+    content = intro(view['heading'], view['intro'])
+    content += f'''<section class="metal-content" data-price-metal="{metal}" data-price-kind="{kind}"><div class="price-controls">{tabs}{kind_tabs}</div>
+<aside class="jewelry-premium" aria-label="Indywidualna wycena biżuterii"{table_hidden}><p><strong>Za biżuterię płacimy więcej niż za złom.</strong> Wyceniamy ją indywidualnie.</p></aside>
+<div class="gold-prices"><div class="purity-view"{table_hidden}><table><caption>Ceny skupu {METALS[metal][0]} za 1 gram</caption><thead><tr><th scope="col">Próba</th><th scope="col">Cena za gram</th></tr></thead><tbody id="price-rows" data-has-prices="true" data-snapshot-date="{stamp}">{rows}</tbody></table></div>
+<div class="products-view"{product_hidden}><h2 id="product-caption">{escape(view['caption'])}</h2><p class="product-unit-note">Ceny skupu za 1 sztukę.</p><label class="product-search">Znajdź produkt<input type="search" id="product-search" placeholder="Wpisz nazwę lub wagę, np. 1 oz, 10 g" autocomplete="off"></label><p id="product-count" class="product-count" role="status">Pozycji w cenniku: {len(products)}</p><div id="product-price-list" role="list" aria-label="Ceny produktów">{product_rows}</div><button type="button" class="product-more" id="product-more" hidden>Pokaż kolejne</button></div>
+<p id="price-status" class="price-note" role="status">Ostatnio pobrany cennik · notowania: {stamp} (Polska). Aktualność cen potwierdzisz telefonicznie.</p><button type="button" id="refresh-prices" class="price-refresh">Odśwież cennik</button><noscript><p>Automatyczne odświeżanie i wyszukiwanie wymaga JavaScript. Wybór metalu i rodzaju cennika działa przez powyższe linki.</p></noscript></div></section>'''
+    content += '<section class="reading-section"><h2>' + escape(view['readingTitle']) + '</h2>' + ''.join('<p>' + escape(paragraph) + '</p>' for paragraph in view['reading']) + '<a class="button" href="kontakt.html">Zapytaj o wycenę →</a></section>'
+    switch_data = json.dumps({'fetchedAt': SNAPSHOT['fetchedAt'], 'metals': SNAPSHOT['metals'], 'products': SNAPSHOT.get('products', {}), 'views': VIEWS}, ensure_ascii=False).replace('<', '\u003c')
     content += '<script id="metal-price-snapshot" type="application/json">' + switch_data + '</script>'
-    page(route, f'Skup {name} Gorzów — ceny za gram | Lombard Sezam', f'Cennik skupu {name} w Gorzowie Wielkopolskim. Ceny za gram dla poszczególnych prób z panelu Sezam. Wycena przy ul. Pocztowej 11.', content, scripts=('prices.js',))
-    if key == 'gold':
+    page(view['route'], view['title'], view['description'], content, scripts=('prices.js',))
+    if metal == 'gold' and kind == 'purity':
         direct_content = content.replace('Skup złota w Gorzowie — cennik</h1>', 'Cennik skupu metali szlachetnych</h1>')
         page('cennik.html', 'Cennik skupu metali szlachetnych Gorzów | Sezam', 'Ceny skupu złota, srebra, platyny i palladu w Gorzowie. Wybierz metal i od razu sprawdź tabelę stawek za gram z panelu Sezam.', direct_content, scripts=('prices.js',))
 

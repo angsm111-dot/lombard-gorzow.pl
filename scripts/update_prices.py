@@ -24,8 +24,32 @@ for key in ('gold', 'silver', 'platinum', 'palladium'):
         if not re.fullmatch(r'\d{3}', purity) or not 0 < int(purity) <= 999 or type(price) not in (int, float) or not math.isfinite(price) or price < 0:
             raise ValueError('Invalid price for ' + key + '/' + purity)
     metals[key] = {'purities': prices}
+products = {}
+for group, metal, kind in [('goldCoins', 'gold', 'coin'), ('goldBars', 'gold', 'bar'), ('silverCoins', 'silver', 'coin'), ('silverBars', 'silver', 'bar')]:
+    items = data.get('products', {}).get(group)
+    if not isinstance(items, list):
+        raise ValueError('Missing product group: ' + group)
+    products[group] = []
+    seen = set()
+    for item in items:
+        if item.get('active') is False:
+            continue
+        if not isinstance(item.get('id'), str) or not item['id'] or item['id'] in seen or not isinstance(item.get('name'), str) or not item['name'].strip():
+            raise ValueError('Invalid product identity: ' + group)
+        if item.get('metal') != metal or item.get('kind') != kind:
+            raise ValueError('Invalid product type: ' + group)
+        for field in ('price', 'grossWeight', 'purity'):
+            value = item.get(field)
+            if type(value) not in (int, float) or not math.isfinite(value) or value < 0:
+                raise ValueError('Invalid product ' + field)
+        if not 0 < item['purity'] <= 1000 or item['grossWeight'] <= 0:
+            raise ValueError('Invalid product mass/purity')
+        seen.add(item['id'])
+        # Keep only price-list metadata, never inline image payloads.
+        products[group].append({key: item[key] for key in ('id', 'name', 'metal', 'kind', 'purity', 'grossWeight', 'fineWeight', 'price', 'order', 'active') if key in item})
+
 datetime.fromisoformat(data['fetchedAt'].replace('Z', '+00:00'))
-snapshot = {'source': url, 'fetchedAt': data['fetchedAt'], 'savedAt': datetime.now(timezone.utc).isoformat(), 'metals': metals}
+snapshot = {'source': url, 'fetchedAt': data['fetchedAt'], 'savedAt': datetime.now(timezone.utc).isoformat(), 'metals': metals, 'products': products}
 (root / 'prices-snapshot.json').write_text(json.dumps(snapshot, ensure_ascii=False, indent=2) + '\n')
 subprocess.run([sys.executable, str(root / 'scripts/build_site.py')], check=True)
 print('Saved validated prices for gold, silver, platinum and palladium.')

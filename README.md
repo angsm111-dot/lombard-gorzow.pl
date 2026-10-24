@@ -1,6 +1,6 @@
 # Lombard Sezam — lombard-gorzow.pl
 
-Lekka, wielostronicowa strona statyczna. Zawiera 15 osobnych plików HTML z treścią dostępną bez JavaScript. Domena docelowa: https://lombard-gorzow.pl. Hosting JDM nadal obsługuje obecną witrynę; nie zmienialiśmy hostingu, DNS ani poczty.
+Lekka, wielostronicowa strona statyczna. Zawiera 19 osobnych plików HTML z treścią dostępną bez JavaScript. Domena docelowa: https://lombard-gorzow.pl. Hosting JDM nadal obsługuje obecną witrynę; nie zmienialiśmy hostingu, DNS ani poczty.
 
 ## Uruchomienie i kontynuacja pracy
 
@@ -34,6 +34,8 @@ Po zmianach źródeł uruchom `python3 scripts/build_site.py`, a potem sprawdź 
 - `/na-sprzedaz.html` — przycisk OLX do profilu z sezam.com.pl;
 - `/cennik.html` — od razu tabela złota i małe przyciski wyboru metalu;
 - `/cennik-zlota.html`, `/cennik-srebra.html`, `/cennik-platyny.html`, `/cennik-palladu.html` — osobne cenniki z przełącznikiem metali;
+- `/monety-zlote.html`, `/sztabki-zlote.html` — skup monet i sztabek złotych;
+- `/monety-srebrne.html`, `/sztabki-srebrne.html` — skup monet i sztabek srebrnych;
 - `/kalkulator-oplat.html` — opłaty 2,5% / 15 dni i 5% / 30 dni;
 - `/kontakt.html` — adres, dojazd, telefon, WhatsApp i demonstracyjny formularz;
 - `/blog.html` — spis czterech artykułów;
@@ -42,7 +44,7 @@ Po zmianach źródeł uruchom `python3 scripts/build_site.py`, a potem sprawdź 
 - `/blog/telefon-laptop-przed-sprzedaza.html`;
 - `/blog/swieta-bozego-narodzenia-2027.html`.
 
-Każda strona ma jeden H1, własny title, description i canonical. Artykuły mają pełną treść w HTML i dane strukturalne BlogPosting. `sitemap.xml` obejmuje 14 kanonicznych adresów (wejście `/cennik.html` wskazuje kanonicznie `/cennik-zlota.html`), a `robots.txt` podaje jej adres. Nie ma routingu wyłącznie po hashach ani wymogu JavaScript do indeksowania treści. Rozdzielenie adresów nie gwarantuje wyższej pozycji; ważne są też jakość treści i rzeczywista publikacja.
+Każda strona ma jeden H1, własny title, description i canonical. Artykuły mają pełną treść w HTML i dane strukturalne BlogPosting. `sitemap.xml` obejmuje 18 kanonicznych adresów (wejście `/cennik.html` wskazuje kanonicznie `/cennik-zlota.html`), a `robots.txt` podaje jej adres. Nie ma routingu wyłącznie po hashach ani wymogu JavaScript do indeksowania treści. Rozdzielenie adresów nie gwarantuje wyższej pozycji; ważne są też jakość treści i rzeczywista publikacja.
 
 ## Ceny z panelu SEZAM
 
@@ -58,7 +60,7 @@ Cenniki odczytują `metals[gold|silver|platinum|palladium].purities[próba].pric
 python3 scripts/update_prices.py
 ```
 
-Polecenie pobiera i sprawdza wszystkie cztery cenniki z weryfikacją TLS, zapisuje snapshot i regeneruje HTML. Przy błędzie nie zapisuje nieprawidłowych danych. Odśwież snapshot przed wdrożeniem.
+Polecenie pobiera i sprawdza wszystkie cztery cenniki oraz cztery katalogi monet i sztabek z weryfikacją TLS, zapisuje snapshot i regeneruje HTML. Przy błędzie nie zapisuje nieprawidłowych danych. Odśwież snapshot przed wdrożeniem.
 
 W przeglądarce cennik odświeża się po otwarciu, co minutę w widocznej karcie, po powrocie do karty i przyciskiem. Podczas błędu zachowuje ostatnie ceny z datą i ostrzeżeniem o braku potwierdzenia aktualności. Przy włączonym JS metal zmienia się w miejscu, bez przeładowania i bez przesunięcia kontrolek; aktualizują się URL, tytuł i metadane. Działa Wstecz. Bez JS przełączanie metali nadal działa przez normalne linki HTML, a ceny są widoczne z datą pobrania. Brylanty zostały usunięte. Cztery metale są wyświetlane jako równe przyciski w jednym rzędzie. Nad tabelą jest wyróżniona informacja o wyższej cenie za biżuterię niż za złom i indywidualnej wycenie.
 
@@ -94,7 +96,7 @@ Opcjonalnie, po uruchomieniu serwera i z dostępnym Playwright/Chromium:
 SITE_URL=http://127.0.0.1:5173/ node tests/browser.cjs
 ```
 
-Test przyjmuje `PLAYWRIGHT_MODULE` jako ścieżkę do dostępnego modułu oraz `CHROMIUM_PATH` jako ścieżkę do przeglądarki. Sprawdza 15 stron przy 320/390/768/1440 px, menu, metalowe cenniki, zmianę ceny panelu, błędy sieci, kalkulator, blog i tryb bez JS.
+Test przyjmuje `PLAYWRIGHT_MODULE` jako ścieżkę do dostępnego modułu oraz `CHROMIUM_PATH` jako ścieżkę do przeglądarki. Sprawdza 19 stron przy 320/390/768/1440 px, menu, metalowe cenniki, zmianę ceny panelu, błędy sieci, kalkulator, blog i tryb bez JS.
 
 ## Paczka do hostingu / podglądu
 
@@ -119,3 +121,11 @@ Na dole głównej jest skrócony cennik złota 585 i srebra 925 z API oraz link 
 Stopka zawiera także www.obraczkigorzow.pl i www.skupzlotagorzow.pl; etykiety i adresy są bez polskich znaków, zgodnie z korektą właściciela. Widok pośredni dużych kafelków cennika został usunięty: wejście z głównej pokazuje od razu złoto, selektor metali i tabelę cen.
 
 Informacja o biżuterii została skrócona do dwóch zdań. `tests/price-tabs.cjs` sprawdza nieruchomą pozycję przełącznika dla wszystkich czterech metali, brak przeładowania dokumentu, Wstecz i odnośniki bez JS przy szerokościach 320–1440 px.
+
+## Monety i sztabki — dwupoziomowy cennik
+
+Pierwszy poziom wybiera metal. Pod złotem i srebrem są trzy rodzaje: Według próby, Monety, Sztabki. Platyna i pallad nie pokazują drugiego poziomu, bo ich katalogi są puste. Selektory pozostają przy górze ekranu podczas przewijania cennika. Zmiana widoku nie przeładowuje strony i zachowuje pozycję kontrolek; URL i metadane odzwierciedlają wybrany widok.
+
+Monety i sztabki mają osobne, statyczne strony HTML i prezentują gotowe `products.goldCoins`, `goldBars`, `silverCoins`, `silverBars` → `price` z panelu. Są to **ceny za jedną sztukę**, bez ponownego mnożenia przez masę lub próbę. Pozycje z `active: false` są pomijane. Snapshot zawiera tylko niezbędne metadane, bez pól obrazów base64. Masa w opisie to masa brutto produktu.
+
+Przy włączonym JS: wyszukiwarka po nazwie lub wadze, dokładny filtr masy dla zapytań typu `1 g`, pierwsze 12 pozycji i „Pokaż kolejne”. Bez JS statyczny HTML pokazuje cały katalog, a nawigacja działa zwykłymi linkami. Ostatnie ceny z datą są zachowane przy błędzie API. `tests/product-prices.cjs` sprawdza rodzaje cenników, kwoty z panelu, jednostkę za sztukę, niewidoczne pozycje, wyszukiwanie, ładowanie kolejnych, historię, brak przeładowania i widok bez JS przy 320/390/768/1440 px.

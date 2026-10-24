@@ -106,10 +106,24 @@ class SiteTests(unittest.TestCase):
             for domain in ('obraczkigorzow.pl', 'skupzlotagorzow.pl'):
                 self.assertIn('https://www.' + domain.encode('idna').decode(), page)
 
+    def test_coin_and_bar_pages_show_panel_prices_per_item(self):
+        snapshot = json.loads((ROOT / 'prices-snapshot.json').read_text())
+        for group, filename in [('goldCoins', 'monety-zlote.html'), ('goldBars', 'sztabki-zlote.html'), ('silverCoins', 'monety-srebrne.html'), ('silverBars', 'sztabki-srebrne.html')]:
+            source = (ROOT / filename).read_text()
+            self.assertIn('Ceny skupu za 1 sztukę.', source)
+            self.assertIn('aria-label="Rodzaj cennika"', source)
+            for item in snapshot['products'][group]:
+                if item.get('active') is False:
+                    continue
+                price = f"{item['price']:,.2f}".replace(',', ' ').replace('.', ',')
+                self.assertIn('data-product-id="' + item['id'] + '"', source)
+                self.assertIn(price + ' zł</strong><small>za 1 sztukę', source)
+            self.assertNotIn('data:image', source)
+
     def test_only_needed_scripts(self):
         for name, doc in self.docs.items():
             js = [urlsplit(a).path for a in doc.assets if '.js' in a]
-            self.assertEqual('prices.js' in js, name.startswith('cennik-') or name == 'cennik.html')
+            self.assertEqual('prices.js' in js, name.startswith(('cennik-', 'monety-', 'sztabki-')) or name == 'cennik.html')
             self.assertEqual('calculator.js' in js, name == 'kalkulator-oplat.html')
             self.assertEqual('home-prices.js' in js, name == 'index.html')
 
