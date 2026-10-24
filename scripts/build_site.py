@@ -74,7 +74,7 @@ def blog_cards(limit=None):
     posts = DATA['posts'][:limit] if limit else DATA['posts']
     return '<div class="blog-grid">' + ''.join(f'''<article class="blog-card"><a class="blog-image-link" href="blog/{p['slug']}.html" aria-label="{escape(p['title'])}"><img class="blog-photo" src="assets/{p['image']}" alt="{escape(p['title'])} — ilustracja poglądowa" loading="lazy" decoding="async" width="1672" height="941"></a><div class="blog-meta">PORADNIK LOMBARDU SEZAM</div><h2 class="blog-card-title"><a href="blog/{p['slug']}.html">{escape(p['title'])}</a></h2><p class="blog-lead">{escape(p['lead'])}</p><a class="read-article" href="blog/{p['slug']}.html">Czytaj artykuł →</a></article>''' for p in posts) + '</div>'
 
-home = SECTIONS['hero'] + SECTIONS['zasady']
+home = SECTIONS['hero']
 home += '<section class="home-links"><h2>W czym możemy pomóc?</h2><div class="service-links"><a href="co-przyjmujemy.html"><strong>Co przyjmujemy</strong><span>Złoto, elektronika, elektronarzędzia, rowery i inne przedmioty →</span></a><a href="cennik.html"><strong>Cennik metali szlachetnych</strong><span>Sprawdź skup złota, srebra, platyny i palladu →</span></a><a href="na-sprzedaz.html"><strong>Na sprzedaż</strong><span>Zobacz nasze aktualne ogłoszenia na OLX →</span></a></div></section>'
 home += '<section class="blog-section"><div class="section-head"><div><div class="eyebrow">PORADNIKI</div><h2>Blog Lombardu Sezam</h2></div><a class="link" href="blog.html">Wszystkie artykuły →</a></div>' + blog_cards(2) + '</section>'
 page('index.html', 'Lombard Gorzów — pożyczki pod zastaw | Sezam', 'Lombard Sezam w Gorzowie Wielkopolskim. Pożyczki pod zastaw, 5% za 30 dni dla nowych klientów. Skup metali szlachetnych. Pocztowa 11.', home)
