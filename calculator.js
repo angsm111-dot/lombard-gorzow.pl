@@ -4,13 +4,16 @@ const feeAmount = document.querySelector('#fee-amount');
 const feeRange = document.querySelector('#fee-range');
 const feeError = document.querySelector('#fee-error');
 const feeResults = document.querySelector('#fee-results');
+const feeNegotiation = document.querySelector('#fee-negotiation');
 const feeMoney = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
 function calculateFee() {
   const amount = feeAmount.valueAsNumber;
   const valid = feeAmount.value !== '' && Number.isFinite(amount) && feeAmount.validity.valid;
   feeAmount.setAttribute('aria-invalid', String(!valid));
   feeResults.hidden = !valid;
-  feeAmount.setAttribute('aria-describedby', valid ? 'fee-results' : 'fee-error');
+  const negotiable = valid && amount >= 40000;
+  feeNegotiation.hidden = !negotiable;
+  feeAmount.setAttribute('aria-describedby', valid ? (negotiable ? 'fee-results fee-negotiation' : 'fee-results') : 'fee-error');
   feeError.textContent = valid ? '' : 'Podaj kwotę od 50 do 100 000 zł, z dokładnością do grosza.';
   document.querySelectorAll('[data-fee-amount]').forEach(button => {
     button.setAttribute('aria-pressed', String(valid && Number(button.dataset.feeAmount) === amount));
