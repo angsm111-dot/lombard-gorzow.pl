@@ -18,13 +18,20 @@ function literal($value) {
 
 function removePath($path) {
     if (is_link($path) || is_file($path)) {
-        if (!unlink($path)) throw new Exception('Nie udało się usunąć pliku.');
-    } elseif (is_dir($path)) {
-        foreach (new DirectoryIterator($path) as $entry) {
-            if (!$entry->isDot()) removePath($entry->getPathname());
+        if (!@unlink($path)) {
+            // JDM protects its own mu-plugin. Keep that one file outside WWW.
+            if (str_ends_with($path, '/mu-plugins/jdm.php')) return false;
+            throw new Exception('Nie udało się usunąć pliku.');
         }
+    } elseif (is_dir($path)) {
+        $complete = true;
+        foreach (new DirectoryIterator($path) as $entry) {
+            if (!$entry->isDot() && !removePath($entry->getPathname())) $complete = false;
+        }
+        if (!$complete) return false;
         if (!rmdir($path)) throw new Exception('Nie udało się usunąć katalogu.');
     }
+    return true;
 }
 
 try {
@@ -109,7 +116,16 @@ try {
         foreach ($remaining as $table) if (str_starts_with($table, $prefix)) throw new Exception('Pozostały tabele WordPressa.');
         echo 'Usunięto tabel WordPressa: ' . count($tables) . ". Nie usuwano innych tabel ani kont baz danych.\n";
     }
-    foreach ($files as $name) { removePath($root . '/' . $name); echo 'Usunięto: ' . $name . "\n"; }
+    foreach ($files as $name) {
+        if (!removePath($root . '/' . $name)) {
+            if ($name !== 'wp-content') throw new Exception('Nie udało się usunąć wskazanego pliku.');
+            $target = dirname($root) . '/.jdm-managed-wordpress-remnants';
+            if (file_exists($target) || is_link($target)) throw new Exception('Nieznany docelowy katalog pozostałości — zatrzymano.');
+            if (!rename($root . '/' . $name, $target)) throw new Exception('Nie udało się przenieść chronionego pliku JDM poza WWW.');
+            echo "Chroniony plik hostingu jdm.php pozostał poza public_html w .jdm-managed-wordpress-remnants; konto nie może go usunąć.\n";
+        }
+        echo 'Usunięto z katalogu strony: ' . $name . "\n";
+    }
     $retired = dirname($root) . '/.codex-wordpress-index.php';
     if (is_file($retired)) {
         if (!str_contains(file_get_contents($retired), 'wp-blog-header.php')) throw new Exception('Nieznany wyłączony plik index — pozostawiono.');
