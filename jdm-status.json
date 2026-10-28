@@ -1,6 +1,6 @@
 {
-  "commit": "1fbee3ea43802f9c73af130eea4cedf78d7a7ba7",
-  "run": "40714907023",
+  "commit": "fb971c364b4ce2935d6d55d5c0ba240d62437902",
+  "run": "40715085923",
   "status": "failure",
   "steps": {
     "configuration": {
@@ -24,7 +24,7 @@
       "conclusion": "failure"
     }
   },
-  "build": "Built 20 static HTML pages, sitemap and robots.txt.\nSaved validated prices for gold, silver, platinum and palladium.\nBuilt 20 static HTML pages, sitemap and robots.txt.\n/home/runner/work/lombard-gorzow.pl/lombard-gorzow.pl/dist/lombard-gorzow.zip 1943968 bytes; 20 HTML pages.\n----------------------------------------------------------------------\nRan 8 tests in 0.135s\n\nOK\n",
+  "build": "Built 20 static HTML pages, sitemap and robots.txt.\nSaved validated prices for gold, silver, platinum and palladium.\nBuilt 20 static HTML pages, sitemap and robots.txt.\n/home/runner/work/lombard-gorzow.pl/lombard-gorzow.pl/dist/lombard-gorzow.zip 1944909 bytes; 20 HTML pages.\n----------------------------------------------------------------------\nRan 8 tests in 0.069s\n\nOK\n",
   "upload": "ERROR: blog.html failed verification -- update discarded.\nrsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1356) [sender=3.2.7]\n",
   "server": "Step not reached",
   "public": "Step not reached"
