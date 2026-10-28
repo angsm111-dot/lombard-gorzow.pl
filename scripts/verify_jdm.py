@@ -46,6 +46,18 @@ def main():
         marker = fetch(opener, base + '/deployment-version.txt?v=' + commit)
         if marker is not None and marker.strip() == commit:
             homepage = fetch(opener, base + '/?v=' + commit)
+            root = Path(__file__).resolve().parent.parent
+            if json.loads((root / 'config/maintenance.json').read_text())['enabled']:
+                if not homepage or '<meta name="maintenance" content="active">' not in homepage:
+                    print('Strona główna nie pokazuje przerwy technicznej.', flush=True)
+                    return 1
+                for name in json.loads((root / 'site-manifest.json').read_text())['pages']:
+                    notice = fetch(opener, base + '/' + name + '?v=' + commit)
+                    if not notice or '<meta name="maintenance" content="active">' not in notice:
+                        print('Nie ukryto podstrony: ' + name, flush=True)
+                        return 1
+                print('Potwierdzono przerwę techniczną na stronie głównej i wszystkich podstronach.', flush=True)
+                return 0
             if homepage and 'Pożyczki pod zastaw' in homepage:
                 latest = json.loads((Path(__file__).resolve().parent.parent / 'content/site.json').read_text())['posts'][0]
                 article_url = base + '/blog/' + latest['slug'] + '.html?v=' + commit

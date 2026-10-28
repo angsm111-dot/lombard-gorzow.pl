@@ -21,3 +21,9 @@ Bezpośredni rsync do .htaccess powodował na JDM błąd weryfikacji. Plik jest 
 GitHub Pages pozostaje osobnym podglądem z noindex. Produkcja pochodzi z `scripts/export.py`. Nie ma blokady wdrażania na oczekiwanie na SSL (wyraźna decyzja użytkownika); publiczne sprawdzenie korzysta z HTTP i respektuje przekierowania, z normalną weryfikacją TLS.
 
 Aktualizacja: rsync powodował błędy weryfikacji blog.html. Transport korzysta teraz z tar przez SSH i porównania SHA-256 wszystkich plików eksportu; nie zmieniono zasad weryfikacji tożsamości SSH. Artykuł o skupie monet srebrnych dodano z tekstem około 2000 znaków i fotografią poglądową.
+
+## Przerwa techniczna
+
+`config/maintenance.json`: `enabled=true` oznacza komunikat na wszystkich 20 generowanych podstronach produkcji; `enabled=false` przywraca pełną witrynę przy następnym push. Użytkownik włączył przerwę, aby dalej poprawiać stronę. Nie wyłączaj jej przy zwykłych poprawkach.
+
+`scripts/maintenance.py` zmienia wyłącznie rozpakowany eksport w dist/public po sprawdzeniu właściwej witryny. Oryginalne HTML, artykuły i podgląd GitHub Pages pozostają pełne. Logo i telefon są dostępne na komunikacie. Weryfikator sprawdza komunikat dla wszystkich wygenerowanych adresów. Nie dotyczy to pozostałych starych plików WordPressa na hostingu. Komunikat jest statycznym HTML z noindex; nie zwraca HTTP 503 (wymagałoby to reguł serwera), więc tryb jest przeznaczony na krótką przerwę.

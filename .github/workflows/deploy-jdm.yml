@@ -53,6 +53,7 @@ jobs:
             mkdir -p dist/public
             python3 -m zipfile -e dist/lombard-gorzow.zip dist/public
             rm dist/public/WDROZENIE.txt
+            python3 scripts/maintenance.py dist/public
             printf '%s\n' "$GITHUB_SHA" > dist/public/deployment-version.txt
           } 2>&1 | tee "$RUNNER_TEMP/jdm-build.txt"
       - name: Przygotuj połączenie SSH

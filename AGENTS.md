@@ -13,3 +13,5 @@
 - Workflow wymaga bash z pipefail; tee nie może maskować błędów. .htaccess jest wysyłany pod nazwą roboczą i przenoszony atomowo, ponieważ bezpośredni rsync do .htaccess na JDM powodował błędy weryfikacji.
 
 - Transport zmieniony z rsync na pełny strumień tar przez SSH, ponieważ rsync zwracał błędy weryfikacji również dla blog.html. SHA-256 każdego pliku eksportu jest kontrolowane na serwerze przed zapisaniem numeru wdrożenia. Reguły .htaccess i numer wdrożenia podstawiane są przez pliki robocze.
+
+- Przerwa techniczna: config/maintenance.json ma enabled=true na prośbę użytkownika. Workflow nakłada komunikat na wszystkie HTML w dist/public, pozostawiając pełne źródła i GitHub Pages do podglądu. Kolejne poprawki NIE wyłączają przerwy. Dopiero polecenie użytkownika wyłączenia przerwy oznacza ustawienie enabled=false i publikację. Weryfikacja publiczna sprawdza wtedy odpowiedni tryb.
