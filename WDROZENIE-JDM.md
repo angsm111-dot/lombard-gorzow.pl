@@ -4,7 +4,7 @@ Docelowo: poprawka w Codexie → sprawdzenie → commit i push do GitHuba → au
 
 Stan: nowa strona jest przygotowana do hostingu statycznego, ale dostęp do JDM nie został skonfigurowany. Domena nadal obsługuje starą stronę WordPress.
 
-Do konfiguracji potrzebne są: dostępny protokół (SFTP/SSH lub FTPS), host i port, użytkownik oraz dokładny katalog domeny. Hasło lub klucz należy skonfigurować jako sekret, nigdy jako treść pliku w repozytorium. Po ustaleniu protokołu można dodać wdrażanie z GitHub Actions po push do main, z blokadą równoległych publikacji.
+Do konfiguracji potrzebne są: dostępny protokół (SFTP/SSH lub FTPS), host i port, użytkownik oraz dokładny katalog domeny. Hasło lub klucz należy skonfigurować jako sekret, nigdy jako treść pliku w repozytorium. Dostęp potwierdzony w panelu: SSH/SFTP, host `web16.jdm.pl`, port `2233`, login `lombardg`. Przygotowano GitHub Actions po push do main z blokadą równoległych publikacji; workflow jest wyłączony do zakończenia konfiguracji.
 
 ## Pierwsza podmiana
 
@@ -18,3 +18,18 @@ Do konfiguracji potrzebne są: dostępny protokół (SFTP/SSH lub FTPS), host i 
 ## Kolejne aktualizacje
 
 Publikuj wyłącznie pliki z eksportu, nie całe repozytorium. Nie usuwaj nieznanych plików hostingu ani katalogów innych usług. Raportuj osobno wynik push do GitHuba i wynik wdrożenia na JDM. Nie ogłaszaj sukcesu wdrożenia przed potwierdzeniem publikacji.
+
+## Jednorazowa konfiguracja automatu
+
+Workflow: `.github/workflows/deploy-jdm.yml`; przesyłanie: `scripts/deploy_jdm.sh`.
+
+W repozytorium GitHub → Settings → Secrets and variables → Actions:
+
+- Secrets → `JDM_PASSWORD`: hasło SSH z panelu JDM.
+- Secrets → `JDM_KNOWN_HOSTS`: klucz publiczny hosta SSH w formacie OpenSSH known_hosts dla `[web16.jdm.pl]:2233`. Klucz lub jego odcisk potwierdź w JDM; nie wyłączaj kontroli tożsamości hosta. Samo hasło nie zastępuje weryfikacji klucza serwera.
+- Variables → `JDM_PATH`: dokładny, bezwzględny katalog dokumentów domeny z panelu; nie zgaduj jego nazwy.
+- Variables → `JDM_DEPLOY_ENABLED`: ustaw `true` dopiero po potwierdzeniu katalogu i konfiguracji sekretów. Następnie uruchom Actions → Publikacja JDM → Run workflow na main. Kolejne push uruchamiają publikację samodzielnie.
+
+Serwer musi udostępniać polecenie `rsync` przez SSH; automat sprawdza to przed wysyłką. Gdy serwer nie obsługuje rsync, dostosuj transport do SFTP przed aktywacją. Skrypt nie tworzy katalogu docelowego i nie używa `--delete`; wysyła tylko eksport, `.htaccess` na końcu. Nie robi kolejnej kopii. Stary WordPress nie jest automatycznie usuwany — po podmianie jego pozostałe adresy i pliki trzeba uporządkować zgodnie z ustaloną migracją. Przesyłanie poszczególnych plików jest atomowe, cała witryna nie jest przełączana atomowo.
+
+Workflow kończy się sukcesem dopiero po odczytaniu numeru wdrożonego commita i nowego nagłówka z publicznej domeny HTTPS. Nie wystarczy samo przesłanie plików. Nieudana walidacja cen lub strony zatrzymuje publikację przed połączeniem z hostingiem.

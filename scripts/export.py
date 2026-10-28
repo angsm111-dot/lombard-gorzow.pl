@@ -21,5 +21,5 @@ output.parent.mkdir(parents=True, exist_ok=True)
 with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
     for filename in sorted(files):
         archive.write(root / filename, filename)
-    archive.writestr('WDROZENIE.txt', 'Wgraj zawartość archiwum do katalogu domeny lombard-gorzow.pl na hostingu. Zachowaj katalogi assets i blog. Przed podmianą zrób kopię starej strony i potwierdź ustawienia poczty. Domena i hosting nie zostały zmienione przez przygotowanie archiwum. Formularz wyceny jest demonstracyjny. Podgląd lokalny: python3 -m http.server 5173.\n')
+    archive.writestr('WDROZENIE.txt', 'Wgraj zawartość archiwum do katalogu domeny lombard-gorzow.pl na hostingu. Zachowaj katalogi assets i blog. Użytkownik ma już kopię starej strony na serwerze — nie twórz kolejnej. Zachowaj ustawienia poczty. Domena i hosting nie zostały zmienione przez przygotowanie archiwum. Formularz wyceny jest demonstracyjny. Podgląd lokalny: python3 -m http.server 5173.\n')
 print(output, output.stat().st_size, 'bytes;', len(pages), 'HTML pages.')

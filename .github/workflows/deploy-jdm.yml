@@ -1,0 +1,83 @@
+name: Publikacja JDM
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-jdm
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: vars.JDM_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      JDM_HOST: web16.jdm.pl
+      JDM_PORT: '2233'
+      JDM_USER: lombardg
+      JDM_PATH: ${{ vars.JDM_PATH }}
+      JDM_PASSWORD: ${{ secrets.JDM_PASSWORD }}
+      JDM_KNOWN_HOSTS: ${{ secrets.JDM_KNOWN_HOSTS }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Sprawdź konfigurację
+        run: |
+          test -n "$JDM_PASSWORD" || { echo 'Brak sekretu JDM_PASSWORD'; exit 1; }
+          test -n "$JDM_KNOWN_HOSTS" || { echo 'Brak sekretu JDM_KNOWN_HOSTS'; exit 1; }
+          python3 - <<'PY'
+          import os, re
+          path = os.environ['JDM_PATH']
+          if not re.fullmatch(r'/[A-Za-z0-9_./-]+', path) or '..' in path.split('/') or path.rstrip('/') in ('', '/home', '/var', '/var/www'):
+              raise SystemExit('Ustaw JDM_PATH na sprawdzony, bezwzględny katalog domeny.')
+          PY
+      - name: Odśwież ceny, zbuduj i sprawdź stronę
+        run: |
+          python3 scripts/update_prices.py
+          python3 scripts/export.py
+          python3 -m unittest discover -s tests -q
+          mkdir -p dist/public
+          python3 -m zipfile -e dist/lombard-gorzow.zip dist/public
+          rm dist/public/WDROZENIE.txt
+          printf '%s\n' "$GITHUB_SHA" > dist/public/deployment-version.txt
+      - name: Przygotuj połączenie SSH
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sshpass rsync
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+          printf '%s\n' "$JDM_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+      - name: Wyślij stronę na JDM
+        env:
+          SSHPASS: ${{ secrets.JDM_PASSWORD }}
+        run: bash scripts/deploy_jdm.sh
+      - name: Sprawdź publiczną wersję
+        run: |
+          python3 - <<'PY'
+          import os, time, urllib.request
+          commit = os.environ['GITHUB_SHA']
+          url = 'https://lombard-gorzow.pl/deployment-version.txt?v=' + commit
+          for attempt in range(6):
+              try:
+                  with urllib.request.urlopen(url, timeout=20) as response:
+                      if response.read().decode().strip() == commit:
+                          break
+              except Exception:
+                  pass
+              if attempt == 5:
+                  raise SystemExit('Pliki wysłane, ale publiczna domena nie potwierdziła wdrożonej wersji. Sprawdź katalog domeny i cache JDM.')
+              time.sleep(5)
+          with urllib.request.urlopen('https://lombard-gorzow.pl/?v=' + commit, timeout=20) as response:
+              if 'Pożyczki pod zastaw' not in response.read().decode('utf-8'):
+                  raise SystemExit('Domena nie wyświetla nowej strony głównej.')
+          print('Potwierdzono publikację: https://lombard-gorzow.pl/ — ' + commit)
+          PY
