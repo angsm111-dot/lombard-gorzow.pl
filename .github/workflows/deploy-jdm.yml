@@ -12,6 +12,10 @@ concurrency:
   group: production-jdm
   cancel-in-progress: false
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   deploy:
     if: vars.JDM_DEPLOY_ENABLED != 'false'
