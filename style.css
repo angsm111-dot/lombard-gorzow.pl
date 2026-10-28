@@ -178,3 +178,17 @@ main>.fee-section{padding-top:45px;padding-bottom:60px}main>.contact-section{pad
 @media(max-width:900px){.other-item-icon{min-height:90px}}
 
 .category-other .other-item-icon{min-height:160px;font:700 160px/1 Georgia,serif;color:#782a41;margin-bottom:24px}@media(max-width:900px){.category-other .other-item-icon{min-height:140px;font-size:140px}}
+
+/* Jeden wybór metalu, osobno jasno opisany rodzaj przedmiotu. */
+.price-controls{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;align-items:start;padding:18px;background:#fffdf8;border:1px solid #e0d7cc;border-radius:12px;margin-bottom:22px;box-shadow:0 4px 16px #30231a06}
+.metal-picker{display:none}.price-enhanced .metal-picker{display:block}.price-enhanced .metal-fallback{display:none}
+.metal-picker,.price-choice-label{font:600 12px/1.5 Arial,sans-serif;color:#5c5048}.price-choice-label{display:block;margin-bottom:8px}
+.metal-picker select{display:block;width:100%;min-height:62px;margin-top:8px;padding:12px 30px 12px 14px;border:1px solid #c4b5a5;border-radius:8px;background:#fff;color:#362e29;font:600 18px Arial,sans-serif;cursor:pointer}
+.metal-picker select:focus-visible{outline:2px solid #782a41;outline-offset:3px}
+.price-controls .kind-tabs{gap:8px}.price-controls .kind-tabs>a,.price-controls .kind-unavailable{min-height:62px;display:flex;flex-direction:column;gap:3px;padding:9px 6px;border-radius:8px;text-align:center;font-size:14px;line-height:1.3;background:#fff;border:1px solid #ded5cb;color:#4f453e}
+.price-controls .kind-tabs small{font-size:10px;font-weight:normal;color:#7b7065;line-height:1.35}.price-controls .kind-tabs a[aria-current="page"]{background:#782a41;border-color:#782a41;color:#fff}.price-controls .kind-tabs a[aria-current="page"] small{color:#f5e8ec}
+.price-controls .kind-unavailable{background:#f4f1ed;border:1px dashed #cfc5ba;color:#8b8074}.price-controls .kind-unavailable small{color:#8b8074}
+[data-price-metal="platinum"] .price-controls,[data-price-metal="palladium"] .price-controls{grid-template-columns:1fr}
+@media(max-width:650px){.price-controls{grid-template-columns:1fr;gap:16px;padding:14px;top:0}.metal-picker select{min-height:48px;font-size:17px}.price-controls .kind-tabs>a,.price-controls .kind-unavailable{font-size:13px;min-height:60px}.price-controls .kind-tabs small{font-size:9px}}
+
+.metal-content:not(.price-enhanced) .price-controls{grid-template-columns:1fr}.metal-step,.kind-step{min-width:0}

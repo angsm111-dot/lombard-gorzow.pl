@@ -7,6 +7,7 @@
   const tabs = section.querySelector('.metal-tabs');
   const kindTabs = section.querySelector('.kind-tabs');
   const controls = section.querySelector('.price-controls');
+  const metalSelect = section.querySelector('#price-metal-select');
   const intro = document.querySelector('.page-intro');
   const panel = section.querySelector('.gold-prices');
   const body = document.querySelector('#price-rows');
@@ -146,6 +147,8 @@
       else link.removeAttribute('aria-current');
     });
     kindTabs.hidden = !views[metal + '/coins'];
+    kindTabs.closest('.kind-step').hidden = kindTabs.hidden;
+    metalSelect.value = metal;
     const links = ['purity', 'coins', 'bars'].filter(type => views[metal + '/' + type]).map(type => {
       if (views[metal + '/' + type].comingSoon) {
         const unavailable = document.createElement('span');
@@ -158,7 +161,11 @@
       const link = document.createElement('a');
       link.dataset.kind = type;
       link.href = views[metal + '/' + type].route;
-      link.textContent = { purity: metal === 'gold' ? 'Złoto na wagę' : 'Srebro na wagę', coins: 'Monety', bars: 'Sztabki' }[type];
+      const title = document.createElement('span');
+      title.textContent = { purity: 'Na wagę', coins: 'Monety', bars: 'Sztabki' }[type];
+      const hint = document.createElement('small');
+      hint.textContent = type === 'purity' ? 'Biżuteria i złom' : 'Cena za sztukę';
+      link.append(title, hint);
       if (type === kind) link.setAttribute('aria-current', 'page');
       return link;
     });
@@ -170,7 +177,7 @@
     if (!view || (nextMetal === metal && nextKind === kind)) return;
     if (nextKind === 'purity') purityEntries(cached, nextMetal);
     else if (!view.comingSoon) productsFor(cached, nextMetal, nextKind);
-    const top = tabs.getBoundingClientRect().top;
+    const top = controls.getBoundingClientRect().top;
     metal = nextMetal;
     kind = nextKind;
     search.value = '';
@@ -188,7 +195,7 @@
     document.querySelector('meta[name="description"]').content = view.description;
     document.querySelector('meta[property="og:description"]').content = view.description;
     if (push) { try { history.pushState({ metal, kind }, '', view.route); } catch { /* Local previews may restrict history. */ } }
-    window.scrollTo({ top: window.scrollY + tabs.getBoundingClientRect().top - top, behavior: 'instant' });
+    window.scrollTo({ top: window.scrollY + controls.getBoundingClientRect().top - top, behavior: 'instant' });
   }
   controls.addEventListener('click', event => {
     const link = event.target.closest('a');
@@ -201,6 +208,11 @@
       event.preventDefault();
       changeView(view.metal, view.kind, true);
     } catch { /* Ordinary links remain a fallback. */ }
+  });
+  metalSelect.addEventListener('change', () => {
+    const key = metalSelect.value;
+    const nextKind = views[key + '/' + kind] && !views[key + '/' + kind].comingSoon ? kind : 'purity';
+    changeView(key, nextKind, true);
   });
   search.addEventListener('input', () => { visible = 12; renderProducts(); });
   more.addEventListener('click', () => { visible += 12; renderProducts(); });
@@ -220,7 +232,9 @@
       const data = await response.json();
       if (data.status !== 'ok') throw new Error('Invalid feed');
       ['gold', 'silver', 'platinum', 'palladium'].forEach(key => purityEntries(data, key));
-      for (const type of ['coins', 'bars']) productsFor(data, 'silver', type);
+      for (const key of ['gold', 'silver']) for (const type of ['coins', 'bars']) {
+        if (!views[key + '/' + type].comingSoon) productsFor(data, key, type);
+      }
       cached = data;
       fresh = true;
       failed = false;
