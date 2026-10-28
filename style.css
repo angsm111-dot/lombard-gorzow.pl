@@ -170,10 +170,9 @@ main>.fee-section{padding-top:45px;padding-bottom:60px}main>.contact-section{pad
 
 .blog-published,.article-header .article-published{font:normal 12px/1.6 Arial,sans-serif;color:#706459;letter-spacing:.02em;margin:0 0 14px}.blog-published time,.article-published time{font-variant-numeric:tabular-nums}
 
-.menu-audience{display:block;font-size:10px;line-height:1.5;font-weight:normal;letter-spacing:0;color:#75645c}
 .accepted-card.category-other{background:#f3e7df;border-color:#ddc7bb;border-top-color:#782a41;justify-content:center}
 .other-item-icon{display:grid;place-items:center;min-height:160px;margin-bottom:24px;color:#782a41}
 .other-contact-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:22px}
 .other-contact-actions .button{flex:1 1 160px;text-align:center;padding:14px 12px;font-size:13px;line-height:1.4;color:#fff}
 .other-contact-actions .whatsapp-button{background:#25d366;color:#fff;border-color:#25d366}
-@media(max-width:900px){.mobile-navigation .menu-audience{font-size:12px;margin-top:3px}.other-item-icon{min-height:90px}}
+@media(max-width:900px){.other-item-icon{min-height:90px}}
