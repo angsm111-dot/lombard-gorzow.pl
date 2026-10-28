@@ -14,7 +14,7 @@
 
 - Transport zmieniony z rsync na pełny strumień tar przez SSH, ponieważ rsync zwracał błędy weryfikacji również dla blog.html. SHA-256 każdego pliku eksportu jest kontrolowane na serwerze przed zapisaniem numeru wdrożenia. Reguły .htaccess i numer wdrożenia podstawiane są przez pliki robocze.
 
-- Przerwa techniczna: config/maintenance.json ma enabled=true na prośbę użytkownika. Workflow nakłada komunikat na wszystkie HTML w dist/public, pozostawiając pełne źródła i GitHub Pages do podglądu. Kolejne poprawki NIE wyłączają przerwy. Dopiero polecenie użytkownika wyłączenia przerwy oznacza ustawienie enabled=false i publikację. Weryfikacja publiczna sprawdza wtedy odpowiedni tryb.
+- Przerwa techniczna: użytkownik polecił ją wyłączyć; config/maintenance.json ma enabled=false. Workflow nakłada komunikat na wszystkie HTML w dist/public, pozostawiając pełne źródła i GitHub Pages do podglądu. Kolejne poprawki mają zachować obecny stan przerwy. Nie włączaj jej ponownie bez polecenia użytkownika. Weryfikacja publiczna sprawdza wtedy odpowiedni tryb.
 
 - WordPress usunięty na wyraźne polecenie użytkownika. Potwierdzony cleanup commit f1268be, run 40721575628: brak wp-admin, wp-includes, wp-content, wp-config.php, wp-login.php, xmlrpc.php i pozostałych rozpoznanych plików WordPressa w public_html. Usunięto 59 tabel tej instalacji, bez kasowania innych baz i kont.
 - Istniejące wp-content-old i .htaccess.bk przeniesiono (nie kopiowano) do /home/lombardg/.existing-wordpress-backups poza WWW. Nie usuwaj kopii użytkownika.
