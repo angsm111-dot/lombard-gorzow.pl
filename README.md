@@ -1,6 +1,6 @@
 # Lombard Sezam — lombard-gorzow.pl
 
-Lekka, wielostronicowa strona statyczna. Zawiera 19 osobnych plików HTML z treścią dostępną bez JavaScript. Domena docelowa: https://lombard-gorzow.pl. Hosting JDM nadal obsługuje obecną witrynę; nie zmienialiśmy hostingu, DNS ani poczty.
+Lekka, wielostronicowa strona statyczna. Zawiera 19 osobnych plików HTML z treścią dostępną bez JavaScript. Domena docelowa: https://lombard-gorzow.pl. Nowa strona jest opublikowana na JDM i potwierdzona pod https://lombard-gorzow.pl/ (wdrożenie df07bd7). Kolejne push main uruchamiają automatyczną publikację; szczegóły w WDROZENIE-JDM.md. Nie zmieniano DNS ani poczty.
 
 ## Uruchomienie i kontynuacja pracy
 

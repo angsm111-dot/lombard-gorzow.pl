@@ -6,3 +6,8 @@
 - Użytkownik potwierdził, że ma już kopię na serwerze i nie chce kolejnej. Nie twórz dodatkowej kopii. Przed pierwszą podmianą ustal katalog domeny i lokalizację istniejącej kopii do ewentualnego przywrócenia. Zachowaj ustawienia poczty i DNS.
 - Dostęp do hostingu przechowuj wyłącznie w sekretach. Nie zapisuj haseł ani prywatnych kluczy w repozytorium lub logach. Publiczny klucz tożsamości hosta SSH jest jawny i może być wersjonowany. Protokół i sposób automatyzacji dobierz po potwierdzeniu możliwości hostingu.
 - Źródła i polecenia budowania opisano w README.md. Nie edytuj wygenerowanych HTML jako źródeł.
+
+- Wdrożenie produkcyjne potwierdzone: commit df07bd7, run 40712444102. Domena główna wyświetla nową statyczną stronę; HTTP przekierowuje na HTTPS, certyfikat przeszedł kontrolę klienta Actions.
+- JDM preferował index.php nad index.html. Rozpoznany start WordPressa przeniesiono (bez kopiowania) do /home/lombardg/.codex-wordpress-index.php poza public_html. Nie przywracaj go podczas zwykłych aktualizacji. Dane i reszta plików WordPressa pozostały.
+- Wyniki każdej publikacji wracają automatycznie na gałąź jdm-status, plik jdm-status.json. Odczytuj je przez git fetch origin refs/heads/jdm-status:refs/remotes/origin/jdm-status oraz git show origin/jdm-status:jdm-status.json. Sprawdzaj commit, status i publiczne potwierdzenie, nie sam kolor workflow.
+- Workflow wymaga bash z pipefail; tee nie może maskować błędów. .htaccess jest wysyłany pod nazwą roboczą i przenoszony atomowo, ponieważ bezpośredni rsync do .htaccess na JDM powodował błędy weryfikacji.
