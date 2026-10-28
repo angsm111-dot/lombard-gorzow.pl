@@ -54,7 +54,9 @@ def main():
                     print('Nie potwierdzono najnowszego artykułu.', flush=True)
                     return 1
                 image_url = base + '/assets/' + latest['image'] + '?v=' + commit
-                with opener.open(image_url, timeout=20) as image:
+                image_request = urllib.request.Request(image_url, headers={'User-Agent': 'Sezam-Deployment-Check/1.0', 'Referer': article_url})
+                with opener.open(image_request, timeout=20) as image:
+                    print(f'Zdjęcie: HTTP {image.status}, Content-Type: {image.headers.get("Content-Type", "brak")}', flush=True)
                     if not image.headers.get('Content-Type', '').startswith('image/'):
                         raise SystemExit('Zdjęcie artykułu nie zostało poprawnie opublikowane.')
                     image.read(1)
