@@ -160,7 +160,7 @@ for view in VIEWS.values():
         tab_links.append(f'<a data-metal="{tab_metal}" href="{target}"{current}>{label}</a>')
     tabs = '<nav class="metal-tabs" aria-label="Wybierz metal">' + ''.join(tab_links) + '</nav>'
     kind_links = []
-    for candidate, label in [('purity', 'Według próby'), ('coins', 'Monety'), ('bars', 'Sztabki')]:
+    for candidate, label in [('purity', 'Złoto na wagę' if metal == 'gold' else 'Srebro na wagę'), ('coins', 'Monety'), ('bars', 'Sztabki')]:
         if metal not in ('gold', 'silver'):
             continue
         current = ' aria-current="page"' if candidate == kind else ''
@@ -186,7 +186,7 @@ for view in VIEWS.values():
     content = intro(view['heading'], view['intro'])
     content += f'''<section class="metal-content" data-price-metal="{metal}" data-price-kind="{kind}"><div class="price-controls">{tabs}{kind_tabs}</div>
 <aside class="jewelry-premium" aria-label="Indywidualna wycena biżuterii"{table_hidden}><p><strong>Za biżuterię płacimy więcej niż za złom.</strong> Wyceniamy ją indywidualnie.</p></aside>
-<div class="gold-prices"><div class="price-coming-soon"{availability_hidden}><h2>W budowie</h2><p>Przygotowujemy cennik. Zapytaj o wycenę telefonicznie lub przez WhatsApp.</p><a class="button" href="kontakt.html">Kontakt →</a></div><div class="purity-view"{table_hidden}><table><caption>Ceny skupu {METALS[metal][0]} za 1 gram</caption><thead><tr><th scope="col">Próba</th><th scope="col">Cena za gram</th></tr></thead><tbody id="price-rows" data-has-prices="true" data-snapshot-date="{stamp}">{rows}</tbody></table></div>
+<div class="gold-prices"><div class="price-coming-soon"{availability_hidden}><h2>W budowie</h2><p>Przygotowujemy cennik. Zapytaj o wycenę telefonicznie lub przez WhatsApp.</p><a class="button" href="kontakt.html">Kontakt →</a></div><div class="purity-view"{table_hidden}><p class="purity-unit-note">Ceny za gram według próby.</p><table><caption>Ceny skupu {METALS[metal][0]} za 1 gram</caption><thead><tr><th scope="col">Próba</th><th scope="col">Cena za gram</th></tr></thead><tbody id="price-rows" data-has-prices="true" data-snapshot-date="{stamp}">{rows}</tbody></table></div>
 <div class="products-view"{product_hidden}><h2 id="product-caption">{escape(view['caption'])}</h2><p class="product-unit-note">Ceny skupu za 1 sztukę.</p><label class="product-search">Znajdź produkt<input type="search" id="product-search" placeholder="Wpisz nazwę lub wagę, np. 1 oz, 10 g" autocomplete="off"></label><p id="product-count" class="product-count" role="status">Pozycji w cenniku: {len(products)}</p><div id="product-price-list" role="list" aria-label="Ceny produktów">{product_rows}</div><button type="button" class="product-more" id="product-more" hidden>Pokaż kolejne</button></div>
 <p id="price-status" class="price-note" role="status"{prices_hidden}>Ostatnio pobrany cennik · notowania: {stamp} (Polska). Aktualność cen potwierdzisz telefonicznie.</p><button type="button" id="refresh-prices" class="price-refresh"{prices_hidden}>Odśwież cennik</button><noscript><p>Automatyczne odświeżanie i wyszukiwanie wymaga JavaScript. Wybór metalu i rodzaju cennika działa przez powyższe linki.</p></noscript></div></section>'''
     content += '<section class="reading-section"' + (' hidden' if view['comingSoon'] else '') + '><h2>' + escape(view['readingTitle']) + '</h2>' + ''.join('<p>' + escape(paragraph) + '</p>' for paragraph in view['reading']) + '<a class="button" href="kontakt.html">Zapytaj o wycenę →</a></section>'
