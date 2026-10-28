@@ -158,7 +158,7 @@
       const link = document.createElement('a');
       link.dataset.kind = type;
       link.href = views[metal + '/' + type].route;
-      link.textContent = { purity: 'Według próby', coins: 'Monety', bars: 'Sztabki' }[type];
+      link.textContent = { purity: metal === 'gold' ? 'Złoto na wagę' : 'Srebro na wagę', coins: 'Monety', bars: 'Sztabki' }[type];
       if (type === kind) link.setAttribute('aria-current', 'page');
       return link;
     });
