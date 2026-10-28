@@ -8,10 +8,15 @@
 - Źródła i polecenia budowania opisano w README.md. Nie edytuj wygenerowanych HTML jako źródeł.
 
 - Wdrożenie produkcyjne potwierdzone: commit df07bd7, run 40712444102. Domena główna wyświetla nową statyczną stronę; HTTP przekierowuje na HTTPS, certyfikat przeszedł kontrolę klienta Actions.
-- JDM preferował index.php nad index.html. Rozpoznany start WordPressa przeniesiono (bez kopiowania) do /home/lombardg/.codex-wordpress-index.php poza public_html. Nie przywracaj go podczas zwykłych aktualizacji. Dane i reszta plików WordPressa pozostały.
+- JDM preferował index.php nad index.html. Rozpoznany start WordPressa przeniesiono (bez kopiowania) do /home/lombardg/.codex-wordpress-index.php poza public_html. Nie przywracaj go podczas zwykłych aktualizacji. Historyczny stan migracji; później użytkownik polecił pełne usunięcie WordPressa — patrz aktualizacja poniżej.
 - Wyniki każdej publikacji wracają automatycznie na gałąź jdm-status, plik jdm-status.json. Odczytuj je przez git fetch origin refs/heads/jdm-status:refs/remotes/origin/jdm-status oraz git show origin/jdm-status:jdm-status.json. Sprawdzaj commit, status i publiczne potwierdzenie, nie sam kolor workflow.
 - Workflow wymaga bash z pipefail; tee nie może maskować błędów. .htaccess jest wysyłany pod nazwą roboczą i przenoszony atomowo, ponieważ bezpośredni rsync do .htaccess na JDM powodował błędy weryfikacji.
 
 - Transport zmieniony z rsync na pełny strumień tar przez SSH, ponieważ rsync zwracał błędy weryfikacji również dla blog.html. SHA-256 każdego pliku eksportu jest kontrolowane na serwerze przed zapisaniem numeru wdrożenia. Reguły .htaccess i numer wdrożenia podstawiane są przez pliki robocze.
 
 - Przerwa techniczna: config/maintenance.json ma enabled=true na prośbę użytkownika. Workflow nakłada komunikat na wszystkie HTML w dist/public, pozostawiając pełne źródła i GitHub Pages do podglądu. Kolejne poprawki NIE wyłączają przerwy. Dopiero polecenie użytkownika wyłączenia przerwy oznacza ustawienie enabled=false i publikację. Weryfikacja publiczna sprawdza wtedy odpowiedni tryb.
+
+- WordPress usunięty na wyraźne polecenie użytkownika. Potwierdzony cleanup commit f1268be, run 40721575628: brak wp-admin, wp-includes, wp-content, wp-config.php, wp-login.php, xmlrpc.php i pozostałych rozpoznanych plików WordPressa w public_html. Usunięto 59 tabel tej instalacji, bez kasowania innych baz i kont.
+- Istniejące wp-content-old i .htaccess.bk przeniesiono (nie kopiowano) do /home/lombardg/.existing-wordpress-backups poza WWW. Nie usuwaj kopii użytkownika.
+- Pliki dodatku JDM i object-cache.php są chronione przez hosting i nie dawały się skasować. Pozostałości przeniesiono do /home/lombardg/.jdm-managed-wordpress-remnants poza WWW; nie są dostępne przez stronę. Nie twierdź, że fizycznie usunięto je z całego serwera.
+- Dawny /home/lombardg/.codex-wordpress-index.php również skasowano. Nie przywracaj WordPressa. Stan cleanup dostępny na gałęzi wordpress-cleanup-status (jdm-status.json). Zadanie cleanup przywrócono do trybu audit po zakończonej operacji; tryb remove wymaga nowego zadania obejmującego usuwanie.

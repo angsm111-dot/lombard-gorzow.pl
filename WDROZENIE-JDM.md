@@ -27,3 +27,11 @@ Aktualizacja: rsync powodował błędy weryfikacji blog.html. Transport korzysta
 `config/maintenance.json`: `enabled=true` oznacza komunikat na wszystkich 20 generowanych podstronach produkcji; `enabled=false` przywraca pełną witrynę przy następnym push. Użytkownik włączył przerwę, aby dalej poprawiać stronę. Nie wyłączaj jej przy zwykłych poprawkach.
 
 `scripts/maintenance.py` zmienia wyłącznie rozpakowany eksport w dist/public po sprawdzeniu właściwej witryny. Oryginalne HTML, artykuły i podgląd GitHub Pages pozostają pełne. Logo i telefon są dostępne na komunikacie. Weryfikator sprawdza komunikat dla wszystkich wygenerowanych adresów. Nie dotyczy to pozostałych starych plików WordPressa na hostingu. Komunikat jest statycznym HTML z noindex; nie zwraca HTTP 503 (wymagałoby to reguł serwera), więc tryb jest przeznaczony na krótką przerwę.
+
+## Usunięcie starej instalacji WordPressa
+
+Na osobne polecenie użytkownika usunięto rozpoznane pliki i katalogi WordPressa oraz 59 jego tabel. Potwierdzenie końcowe: cleanup f1268be, run 40721575628. Plik startowy przeniesiony wcześniej poza public_html również skasowano. Konta bazy i sam kontener bazy nie były usuwane; nie było innych tabel w tej bazie.
+
+Istniejące kopie wp-content-old oraz .htaccess.bk przeniesiono bez kopiowania do `/home/lombardg/.existing-wordpress-backups` poza WWW. Chronione przez hosting pliki mu-pluginu JDM i object-cache.php nie mogły zostać usunięte przez konto SSH — po skasowaniu reszty wp-content przeniesiono ich pozostałości do `/home/lombardg/.jdm-managed-wordpress-remnants`. Nie są dostępne przez stronę.
+
+Workflow `.github/workflows/wordpress-cleanup.yml` służy do odczytu lub celowego czyszczenia. Po operacji `config/wordpress-cleanup.json` przywrócono do audit. Wyniki wracają na gałąź wordpress-cleanup-status do jdm-status.json. Zwykłe publikacje nie uruchamiają kasowania WordPressa.
