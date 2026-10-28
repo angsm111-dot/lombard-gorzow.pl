@@ -19,7 +19,7 @@ def api(path, method='GET', data=None):
         return json.load(response)
 
 
-branch = 'jdm-status'
+branch = os.environ.get('JDM_STATUS_BRANCH', 'jdm-status')
 try:
     api('/git/ref/heads/' + branch)
 except urllib.error.HTTPError as error:
@@ -29,7 +29,7 @@ except urllib.error.HTTPError as error:
 
 report = {'commit': os.environ['GITHUB_SHA'], 'run': os.environ['GITHUB_RUN_ID'],
           'status': os.environ['DEPLOY_STATUS'], 'steps': json.loads(os.environ.get('DEPLOY_STEPS', '{}'))}
-for name in ('build', 'upload', 'server', 'public'):
+for name in ('build', 'upload', 'server', 'public', 'cleanup'):
     path = Path(os.environ['RUNNER_TEMP']) / ('jdm-' + name + '.txt')
     report[name] = path.read_text() if path.exists() else 'Step not reached'
 # Do not rely on GitHub log masking for a file stored in Git.

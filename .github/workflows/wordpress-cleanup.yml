@@ -1,0 +1,53 @@
+name: Usuń stary WordPress JDM
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - config/wordpress-cleanup.json
+      - scripts/wordpress_cleanup.php
+      - .github/workflows/wordpress-cleanup.yml
+permissions:
+  contents: write
+concurrency:
+  group: production-jdm
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      JDM_PASSWORD: ${{ secrets.JDM_PASSWORD }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Przygotuj SSH
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sshpass
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+          cp config/jdm_known_hosts "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+      - name: Sprawdź lub usuń instalację
+        id: cleanup
+        env:
+          SSHPASS: ${{ secrets.JDM_PASSWORD }}
+        run: |
+          mode=$(python3 -c 'import json; print(json.load(open("config/wordpress-cleanup.json"))["mode"])')
+          [[ "$mode" == audit || "$mode" == remove ]]
+          sshpass -e ssh -p 2233 -o StrictHostKeyChecking=yes -o ConnectTimeout=20 lombardg@web16.jdm.pl \
+            'cat > /home/lombardg/.codex-cleanup-wordpress.php && chmod 600 /home/lombardg/.codex-cleanup-wordpress.php' < scripts/wordpress_cleanup.php
+          sshpass -e ssh -p 2233 -o StrictHostKeyChecking=yes -o ConnectTimeout=20 lombardg@web16.jdm.pl \
+            "php /home/lombardg/.codex-cleanup-wordpress.php '$mode'; result=\$?; rm -f /home/lombardg/.codex-cleanup-wordpress.php; exit \$result" \
+            2>&1 | tee "$RUNNER_TEMP/jdm-cleanup.txt"
+      - name: Zapisz wynik dla Codexa
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JDM_STATUS_BRANCH: wordpress-cleanup-status
+          DEPLOY_STATUS: ${{ job.status }}
+          DEPLOY_STEPS: ${{ toJSON(steps) }}
+        run: python3 scripts/publish_jdm_status.py
