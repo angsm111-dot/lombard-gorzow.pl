@@ -9,16 +9,22 @@ ssh_options=(-p "$JDM_PORT" -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o
 destination="${JDM_USER}@${JDM_HOST}"
 
 # Nie zgadujemy ani nie tworzymy docelowego katalogu domeny.
-sshpass -e ssh "${ssh_options[@]}" "$destination" "test -d '$JDM_PATH' && command -v rsync >/dev/null"
-export RSYNC_RSH="sshpass -e ssh -p $JDM_PORT -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15"
-rsync -rt --delay-updates --chmod=D755,F644 \
-  --exclude='.htaccess' --exclude='deployment-version.txt' \
-  dist/public/ "$destination:$JDM_PATH/"
-# JDM może zmieniać .htaccess podczas zapisu, co psuje weryfikację rsync.
-# Przesyłamy pod nazwą roboczą, potem atomowo podstawiamy gotowy plik.
-rsync -rt --chmod=F644 dist/public/.htaccess "$destination:$JDM_PATH/.codex-static-htaccess"
-sshpass -e ssh "${ssh_options[@]}" "$destination" "mv '$JDM_PATH/.codex-static-htaccess' '$JDM_PATH/.htaccess'"
-rsync -rt --chmod=F644 dist/public/deployment-version.txt "$destination:$JDM_PATH/"
+sshpass -e ssh "${ssh_options[@]}" "$destination" "test -d '$JDM_PATH' && command -v tar >/dev/null && command -v sha256sum >/dev/null"
+# Pełny strumień zamiast zawodnego na tym hostingu transferu różnicowego rsync.
+tar -czf - --exclude=./.htaccess --exclude=./deployment-version.txt -C dist/public . |
+  sshpass -e ssh "${ssh_options[@]}" "$destination" "umask 022; tar -xzf - -C '$JDM_PATH' --no-same-owner --no-same-permissions"
+# Potwierdź zawartość każdego wysłanego pliku przed oznaczeniem wdrożenia.
+python3 - <<'CHECKSUMS' | sshpass -e ssh "${ssh_options[@]}" "$destination" "cd '$JDM_PATH' && sha256sum --check --status -"
+import hashlib
+from pathlib import Path
+root = Path('dist/public')
+for path in sorted(root.rglob('*')):
+    if path.is_file() and path.name not in ('.htaccess', 'deployment-version.txt'):
+        print(hashlib.sha256(path.read_bytes()).hexdigest() + '  ' + path.relative_to(root).as_posix())
+CHECKSUMS
+# Reguły i numer wersji podstawiamy po poprawnym sprawdzeniu zawartości.
+sshpass -e ssh "${ssh_options[@]}" "$destination" "cat > '$JDM_PATH/.codex-static-htaccess' && chmod 644 '$JDM_PATH/.codex-static-htaccess' && mv '$JDM_PATH/.codex-static-htaccess' '$JDM_PATH/.htaccess'" < dist/public/.htaccess
+sshpass -e ssh "${ssh_options[@]}" "$destination" "cat > '$JDM_PATH/.codex-deployment-version' && chmod 644 '$JDM_PATH/.codex-deployment-version' && mv '$JDM_PATH/.codex-deployment-version' '$JDM_PATH/deployment-version.txt'" < dist/public/deployment-version.txt
 # Serwer JDM preferuje index.php mimo DirectoryIndex. Wyłączamy wyłącznie
 # rozpoznany start WordPressa, po kompletnym przesłaniu statycznej strony.
 # To przeniesienie poza public_html, nie dodatkowa kopia ani usuwanie danych WP.
