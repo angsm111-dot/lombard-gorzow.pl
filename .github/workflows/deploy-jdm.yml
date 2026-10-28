@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: production-jdm
@@ -64,6 +64,12 @@ jobs:
           SSHPASS: ${{ secrets.JDM_PASSWORD }}
         run: |
           sshpass -e ssh -T -p "$JDM_PORT" -o StrictHostKeyChecking=yes -o ConnectTimeout=20 \
-            "$JDM_USER@$JDM_HOST" "cd '$JDM_PATH' && printf 'Wersja na dysku JDM: ' && cat deployment-version.txt && ls -l index.html .htaccess && if test -f index.php; then ls -l index.php; fi"
+            "$JDM_USER@$JDM_HOST" "cd '$JDM_PATH' && printf 'Wersja na dysku JDM: ' && cat deployment-version.txt && ls -l index.html .htaccess && if test -f index.php; then ls -l index.php; fi" | tee "$RUNNER_TEMP/jdm-server.txt"
       - name: Sprawdź publiczną wersję
-        run: python3 -u scripts/verify_jdm.py
+        run: python3 -u scripts/verify_jdm.py | tee "$RUNNER_TEMP/jdm-public.txt"
+      - name: Zapisz wynik dla Codexa
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_STATUS: ${{ job.status }}
+        run: python3 scripts/publish_jdm_status.py
