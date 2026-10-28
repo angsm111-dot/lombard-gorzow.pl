@@ -1,0 +1,53 @@
+name: Sprawdź połączenie JDM
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/check-jdm.yml
+      - scripts/inspect_jdm.sh
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Przygotuj SSH
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sshpass
+      - name: Odczytaj katalogi strony bez zmieniania plików
+        env:
+          SSHPASS: ${{ secrets.JDM_PASSWORD }}
+          JDM_KNOWN_HOSTS: ${{ secrets.JDM_KNOWN_HOSTS }}
+        run: |
+          test -n "$SSHPASS" || { echo 'Brak sekretu JDM_PASSWORD (dokładnie taka nazwa).'; exit 1; }
+          mkdir -p "$RUNNER_TEMP/jdm"
+          chmod 700 "$RUNNER_TEMP/jdm"
+          if [ -n "$JDM_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$JDM_KNOWN_HOSTS" > "$RUNNER_TEMP/jdm/known_hosts"
+          fi
+          # Pierwsze połączenie: standardowy SSH trust-on-first-use.
+          # Istniejący klucz, jeśli skonfigurowany, musi być zgodny.
+          set -o pipefail
+          sshpass -e ssh -T -p 2233 \
+            -o StrictHostKeyChecking=accept-new \
+            -o UserKnownHostsFile="$RUNNER_TEMP/jdm/known_hosts" \
+            -o ConnectTimeout=20 -o ServerAliveInterval=15 \
+            lombardg@web16.jdm.pl 'bash -s' < scripts/inspect_jdm.sh \
+            | tee "$RUNNER_TEMP/jdm/result.txt"
+          {
+            echo '## Odczyt konfiguracji JDM — bez publikacji'
+            echo '```text'
+            cat "$RUNNER_TEMP/jdm/result.txt"
+            echo '```'
+            echo '### Publiczny klucz hosta z tego połączenia (pierwsze zaufanie SSH)'
+            echo '```text'
+            cat "$RUNNER_TEMP/jdm/known_hosts"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
