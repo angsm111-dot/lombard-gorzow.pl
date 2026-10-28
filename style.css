@@ -194,3 +194,19 @@ main>.fee-section{padding-top:45px;padding-bottom:60px}main>.contact-section{pad
 .metal-content:not(.price-enhanced) .price-controls{grid-template-columns:1fr}.metal-step,.kind-step{min-width:0}
 
 .fee-negotiation{padding:14px 16px;margin:0 0 14px;background:#f8e4d5;border:1px solid #b77857;border-left:4px solid #782a41;border-radius:6px;color:#622139;font-size:17px;font-weight:700;line-height:1.4}.fee-negotiation[hidden]{display:none}
+
+/* Stały kontakt WhatsApp, bez bibliotek i zewnętrznych skryptów. */
+body{padding-bottom:86px}
+.floating-whatsapp{position:fixed;right:max(20px,env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));z-index:45;display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:#25d366;color:#fff;border:3px solid #fff;box-shadow:0 5px 20px #102f263d;text-decoration:none}
+.floating-whatsapp:hover{background:#1ebd5b;color:#fff}.floating-whatsapp:focus-visible{outline:3px solid #263449;outline-offset:4px}
+.metal-picker select{appearance:none;-webkit-appearance:none;padding-right:48px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23782a41' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:22px 22px}
+.fee-amount-group>label,.fee-range-group>label{display:block;font-size:12px;line-height:1.5;font-weight:bold}
+.fee-calculator .fee-presets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:14px 0 16px}
+.fee-calculator .fee-presets button{min-height:44px;padding:9px 5px;font-size:11px;white-space:nowrap}
+.fee-range-group{margin:0 0 16px}.fee-range-group #fee-range{width:100%;margin:12px 0 4px}.fee-calculator .fee-periods{margin:4px 0 18px}
+.whatsapp-card>h3{margin-top:0}
+@media(max-width:900px){.mobile-navigation nav a{white-space:normal;line-height:1.4}}
+@media(max-width:600px){.floating-whatsapp{width:56px;height:56px;right:max(14px,env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom))}.fee-calculator .fee-presets{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0 16px}.fee-range-group{margin-bottom:14px}}
+@media(max-width:360px){.fee-calculator .fee-presets{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(forced-colors:active){.metal-picker select{appearance:auto;background-image:none;padding-right:12px}}
+@media print{.floating-whatsapp{display:none}body{padding-bottom:0}}
