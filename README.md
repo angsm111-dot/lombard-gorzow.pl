@@ -18,7 +18,7 @@ Python jest potrzebny tylko do lokalnego serwera i generowania plików. Hosting 
 - `content/site.json`: źródło wspólnego nagłówka, stopki, sekcji i czterech artykułów. **Nie edytuj wygenerowanych HTML jako źródła** — następny build je zastąpi.
 - `scripts/build_site.py`: struktura podstron, ich tytuły, opisy, canonical i generowanie mapy witryny.
 - `style.css`: wspólne style, responsywność i natywne menu mobilne.
-- `app.js`: tylko wspólne menu i demonstracyjny formularz.
+- `app.js`: wspólne menu; formularz mailowy został wyłączony.
 - `calculator.js`: kalkulator opłat, ładowany wyłącznie na stronie kalkulatora.
 - `prices.js`: odczyt publicznych cen, ładowany wyłącznie w czterech cennikach.
 - `home-prices.js`: lekki skrót cen złota 585 i srebra 925 wyłącznie na głównej.
@@ -37,7 +37,7 @@ Po zmianach źródeł uruchom `python3 scripts/build_site.py`, a potem sprawdź 
 - `/monety-zlote.html`, `/sztabki-zlote.html` — skup monet i sztabek złotych;
 - `/monety-srebrne.html`, `/sztabki-srebrne.html` — skup monet i sztabek srebrnych;
 - `/kalkulator-oplat.html` — opłaty 2,5% / 15 dni i 5% / 30 dni;
-- `/kontakt.html` — adres, dojazd, telefon, WhatsApp i demonstracyjny formularz;
+- `/kontakt.html` — adres, dojazd, telefon i WhatsApp; formularz mailowy wyłączony;
 - `/blog.html` — spis czterech artykułów;
 - `/blog/co-przyjmujemy-do-lombardu.html`;
 - `/blog/ile-warte-jest-zloto.html`;
@@ -131,3 +131,5 @@ Monety i sztabki mają osobne, statyczne strony HTML i prezentują gotowe `produ
 Przy włączonym JS: wyszukiwarka po nazwie lub wadze, dokładny filtr masy dla zapytań typu `1 g`, pierwsze 12 pozycji i „Pokaż kolejne”. Bez JS statyczny HTML pokazuje cały katalog, a nawigacja działa zwykłymi linkami. Ostatnie ceny z datą są zachowane przy błędzie API. `tests/product-prices.cjs` sprawdza rodzaje cenników, kwoty z panelu, jednostkę za sztukę, niewidoczne pozycje, wyszukiwanie, ładowanie kolejnych, historię, brak przeładowania i widok bez JS przy 320/390/768/1440 px.
 
 Sekcja „Co przyjmujemy” ma teraz pięć kategorii: Złoto i srebro (także srebrne łańcuszki na zdjęciu), Telefony/laptopy/tablety i elektronika użytkowa, osobne Konsole PlayStation, Elektronarzędzia oraz Rowery z nowoczesnym modelem MTB. Grafiki poglądowe zoptymalizowano do WebP. Zdjęcie w artykule o przygotowaniu telefonu/laptopa pozostaje osobnym plikiem.
+
+Aktualne ograniczenia na prośbę użytkownika: formularz mailowy usunięty z kontaktu; złote monety i sztabki oznaczone jako „W budowie”, bez aktywnych zakładek i cen. Bezpośrednie adresy pokazują komunikat również bez JavaScript. Srebrne monety i sztabki oraz ceny złota według próby pozostają aktywne.

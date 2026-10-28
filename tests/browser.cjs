@@ -33,7 +33,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       const overflow = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));
       assert.ok(overflow.scroll <= width, JSON.stringify({ filename, ...overflow }));
       if (filename.startsWith('cennik-') || filename.startsWith('monety-') || filename.startsWith('sztabki-') || filename === 'cennik.html') {
-        await page.waitForSelector('#price-status[data-state="ready"]');
+        await page.waitForSelector('#price-status[data-state="ready"]', { state: 'attached' });
         const metal = await page.locator('[data-price-metal]').getAttribute('data-price-metal');
         assert.equal(await page.locator('#price-rows tr').count(), Object.keys(feed.metals[metal].purities).length);
         assert.equal(await page.getByText('Brylanty', { exact: true }).count(), 0);
@@ -53,7 +53,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       await page.waitForURL('**/cennik-srebra.html');
       await page.getByRole('navigation', { name: 'Wybierz metal' }).getByRole('link', { name: 'Pallad', exact: true }).click();
       await page.waitForURL('**/cennik-palladu.html');
-      await page.waitForSelector('#price-status[data-state="ready"]');
+      await page.waitForSelector('#price-status[data-state="ready"]', { state: 'attached' });
       feed.metals.palladium.purities['999'].price = 123.45;
       await page.getByRole('button', { name: 'Odśwież cennik' }).click();
       await page.waitForFunction(() => document.querySelector('#price-rows').textContent.includes('123,45 zł/g'));

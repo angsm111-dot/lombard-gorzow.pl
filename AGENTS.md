@@ -20,3 +20,5 @@
 - Istniejące wp-content-old i .htaccess.bk przeniesiono (nie kopiowano) do /home/lombardg/.existing-wordpress-backups poza WWW. Nie usuwaj kopii użytkownika.
 - Pliki dodatku JDM i object-cache.php są chronione przez hosting i nie dawały się skasować. Pozostałości przeniesiono do /home/lombardg/.jdm-managed-wordpress-remnants poza WWW; nie są dostępne przez stronę. Nie twierdź, że fizycznie usunięto je z całego serwera.
 - Dawny /home/lombardg/.codex-wordpress-index.php również skasowano. Nie przywracaj WordPressa. Stan cleanup dostępny na gałęzi wordpress-cleanup-status (jdm-status.json). Zadanie cleanup przywrócono do trybu audit po zakończonej operacji; tryb remove wymaga nowego zadania obejmującego usuwanie.
+
+- Na prośbę użytkownika formularz mailowy jest wyłączony (brak formularza w kontakcie). Monety i sztabki złote mają comingSoon=true w generatorze, nieaktywne zakładki „W budowie” i strony bez list produktów; JS respektuje ten stan i nie przywraca cen po odświeżeniu. Nie włączaj ich przy zwykłych aktualizacjach. Srebro i złoto według próby pozostają aktywne.

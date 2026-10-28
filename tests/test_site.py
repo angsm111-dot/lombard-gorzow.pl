@@ -108,7 +108,7 @@ class SiteTests(unittest.TestCase):
 
     def test_coin_and_bar_pages_show_panel_prices_per_item(self):
         snapshot = json.loads((ROOT / 'prices-snapshot.json').read_text())
-        for group, filename in [('goldCoins', 'monety-zlote.html'), ('goldBars', 'sztabki-zlote.html'), ('silverCoins', 'monety-srebrne.html'), ('silverBars', 'sztabki-srebrne.html')]:
+        for group, filename in [('silverCoins', 'monety-srebrne.html'), ('silverBars', 'sztabki-srebrne.html')]:
             source = (ROOT / filename).read_text()
             self.assertIn('Ceny skupu za 1 sztukę.', source)
             self.assertIn('aria-label="Rodzaj cennika"', source)
@@ -119,6 +119,18 @@ class SiteTests(unittest.TestCase):
                 self.assertIn('data-product-id="' + item['id'] + '"', source)
                 self.assertIn(price + ' zł</strong><small>za 1 sztukę', source)
             self.assertNotIn('data:image', source)
+
+    def test_disabled_features(self):
+        self.assertNotIn('<form', (ROOT / 'kontakt.html').read_text())
+        for name in ('monety-zlote.html', 'sztabki-zlote.html'):
+            source = (ROOT / name).read_text()
+            self.assertIn('<div class="price-coming-soon"><h2>W budowie</h2>', source)
+            self.assertNotIn('data-product-id=', source)
+            self.assertNotIn('"goldCoins":', source)
+        for name in ('cennik.html', 'cennik-zlota.html'):
+            source = (ROOT / name).read_text()
+            self.assertIn('aria-disabled="true">Monety<small>W budowie</small>', source)
+            self.assertNotIn('href="monety-zlote.html"', source)
 
     def test_only_needed_scripts(self):
         for name, doc in self.docs.items():

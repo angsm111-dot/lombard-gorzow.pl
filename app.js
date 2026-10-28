@@ -1,9 +1,3 @@
-const valuationForm = document.querySelector('#wycena form');
-if (valuationForm) valuationForm.addEventListener('submit', event => {
-  event.preventDefault();
-  document.querySelector('#result').textContent = 'Zapytanie przygotowane. To demonstracja — dane nie zostały wysłane.';
-});
-
 // Natywne details/summary otwiera menu także przy wyłączonym JavaScript.
 const mobileMenu = document.querySelector('.mobile-navigation');
 function closeMobileMenu(restoreFocus = false) {
