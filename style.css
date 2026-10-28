@@ -167,3 +167,5 @@ main>.fee-section{padding-top:45px;padding-bottom:60px}main>.contact-section{pad
 @keyframes jewelry-highlight{0%,100%{background-color:#fff8e9;border-color:#b68e4d;box-shadow:0 0 0 0 rgba(120,42,65,0)}50%{background-color:#efb5a3;border-color:#782a41;box-shadow:0 0 0 5px rgba(120,42,65,.32)}}
 .purity-unit-note{margin:0 0 14px;color:#6a5a49;font-size:13px;line-height:1.5}
 @media(prefers-reduced-motion:reduce){.jewelry-premium{animation:none;background-color:#f7e0d4;border-color:#a8736e}}
+
+.blog-published,.article-header .article-published{font:normal 12px/1.6 Arial,sans-serif;color:#706459;letter-spacing:.02em;margin:0 0 14px}.blog-published time,.article-published time{font-variant-numeric:tabular-nums}

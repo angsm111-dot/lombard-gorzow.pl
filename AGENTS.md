@@ -22,3 +22,5 @@
 - Dawny /home/lombardg/.codex-wordpress-index.php również skasowano. Nie przywracaj WordPressa. Stan cleanup dostępny na gałęzi wordpress-cleanup-status (jdm-status.json). Zadanie cleanup przywrócono do trybu audit po zakończonej operacji; tryb remove wymaga nowego zadania obejmującego usuwanie.
 
 - Na prośbę użytkownika formularz mailowy jest wyłączony (brak formularza w kontakcie). Monety i sztabki złote mają comingSoon=true w generatorze, nieaktywne zakładki „W budowie” i strony bez list produktów; JS respektuje ten stan i nie przywraca cen po odświeżeniu. Nie włączaj ich przy zwykłych aktualizacjach. Srebro i złoto według próby pozostają aktywne.
+
+- Artykuły mają stałe pole published w formacie YYYY-MM-DD w content/site.json, widoczne na liście i w artykule oraz jako datePublished w BlogPosting. Nowym artykułom nadawaj rzeczywistą datę publikacji; nie zmieniaj daty istniejącego wpisu przy zwykłych poprawkach.
