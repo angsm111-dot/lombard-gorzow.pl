@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Check the public deployment and report redirects and actual HTTP errors."""
 import os
+import json
+from pathlib import Path
 import re
 import socket
 import sys
@@ -45,6 +47,18 @@ def main():
         if marker is not None and marker.strip() == commit:
             homepage = fetch(opener, base + '/?v=' + commit)
             if homepage and 'Pożyczki pod zastaw' in homepage:
+                latest = json.loads((Path(__file__).resolve().parent.parent / 'content/site.json').read_text())['posts'][0]
+                article_url = base + '/blog/' + latest['slug'] + '.html?v=' + commit
+                article = fetch(opener, article_url)
+                if not article or latest['title'] not in article:
+                    print('Nie potwierdzono najnowszego artykułu.', flush=True)
+                    return 1
+                image_url = base + '/assets/' + latest['image'] + '?v=' + commit
+                with opener.open(image_url, timeout=20) as image:
+                    if not image.headers.get('Content-Type', '').startswith('image/'):
+                        raise SystemExit('Zdjęcie artykułu nie zostało poprawnie opublikowane.')
+                    image.read(1)
+                print('Potwierdzono najnowszy artykuł i zdjęcie: ' + article_url, flush=True)
                 print(f'Potwierdzono publiczną publikację: {base}/ — {commit}', flush=True)
                 return 0
         elif marker is not None:

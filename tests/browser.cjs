@@ -70,7 +70,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       await page.locator('#fee-amount').fill('2000');
       assert.match(await page.locator('#fee-total').innerText(), /2\s?100,00/);
       await page.goto(base + 'blog.html');
-      await page.getByRole('link', { name: 'Czytaj artykuł', exact: false }).first().click();
+      await page.locator('.read-article[href="blog/co-przyjmujemy-do-lombardu.html"]').click();
       await page.waitForURL('**/blog/co-przyjmujemy-do-lombardu.html');
       assert.ok((await page.locator('.article-body').innerText()).length > 1000);
     }

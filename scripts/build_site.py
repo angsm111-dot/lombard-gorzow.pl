@@ -191,7 +191,7 @@ page('kalkulator-oplat.html', 'Kalkulator opłat — 2,5% / 15 dni, 5% / 30 dni 
 contact = SECTIONS['kontakt'].replace('<h2>Masz pytanie?<br> Napisz na <em>WhatsApp.</em></h2>', '<h1>Kontakt — Lombard Sezam Gorzów</h1>')
 contact = re.sub(r'<h2>Masz pytanie\?.*?</h2>', '<h1>Kontakt — Lombard Sezam Gorzów</h1>', contact)
 page('kontakt.html', 'Kontakt i dojazd — Pocztowa 11, Gorzów | Lombard Sezam', 'Lombard Sezam: ul. Pocztowa 11, 66-400 Gorzów Wielkopolski. Zadzwoń 601 775 146, napisz na WhatsApp lub wyznacz trasę.', contact + SECTIONS['wycena'])
-page('blog.html', 'Blog — złoto, zastaw i praktyczne porady | Lombard Gorzów', 'Poradniki Lombardu Sezam: co przyjmujemy pod zastaw, wycena złota, przygotowanie telefonu do sprzedaży i planowanie świątecznych wydatków.', intro('Blog Lombardu Sezam', 'Praktyczne informacje o wycenie przedmiotów, złocie i przygotowaniu do wizyty w lombardzie.') + '<section class="blog-section">' + blog_cards() + '</section>')
+page('blog.html', 'Blog — złoto, zastaw i praktyczne porady | Lombard Gorzów', 'Poradniki Lombardu Sezam: skup monet Gorzów, wycena srebra i złota, przedmioty pod zastaw oraz przygotowanie do wizyty w lombardzie.', intro('Blog Lombardu Sezam', 'Praktyczne informacje o wycenie przedmiotów, złocie i przygotowaniu do wizyty w lombardzie.') + '<section class="blog-section">' + blog_cards() + '</section>')
 for post in DATA['posts']:
     body = post['body'].replace('<h4>', '<h2>').replace('</h4>', '</h2>')
     body = re.sub(r'<a class="link".*?</a>\s*$', '', body)

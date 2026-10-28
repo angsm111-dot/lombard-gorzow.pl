@@ -68,7 +68,7 @@ class SiteTests(unittest.TestCase):
                         self.assertIn(parsed.fragment, Document(target.read_text()).ids)
     def test_crawlable_articles_and_sitemap(self):
         articles = [p for p in self.pages if p.startswith('blog/')]
-        self.assertEqual(len(articles), 4)
+        self.assertCountEqual(articles, ['blog/' + post['slug'] + '.html' for post in json.loads((ROOT / 'content/site.json').read_text())['posts']])
         for article in articles:
             self.assertIn(article, self.docs['blog.html'].links)
             self.assertIn('BlogPosting', (ROOT / article).read_text())
