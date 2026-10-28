@@ -69,6 +69,22 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       assert.match(await page.locator('#fee-cost').innerText(), /50,00/);
       await page.locator('#fee-amount').fill('2000');
       assert.match(await page.locator('#fee-total').innerText(), /2\s?100,00/);
+      for (const amount of [40000, 60000, 80000, 100000]) {
+        await page.locator('[data-fee-amount="' + amount + '"]').click();
+        assert.equal(await page.locator('#fee-amount').inputValue(), String(amount));
+        assert.equal(await page.locator('#fee-negotiation').isVisible(), true);
+      }
+      await page.locator('[data-fee-amount="10000"]').click();
+      assert.equal(await page.locator('#fee-negotiation').isVisible(), false);
+      await page.locator('#fee-amount').fill('39999.99');
+      assert.equal(await page.locator('#fee-negotiation').isVisible(), false);
+      await page.locator('#fee-amount').fill('40000');
+      assert.equal(await page.locator('#fee-negotiation').isVisible(), true);
+      await page.locator('#fee-range').evaluate(e => { e.value = 80000; e.dispatchEvent(new Event('input', { bubbles: true })); });
+      assert.equal(await page.locator('#fee-negotiation').isVisible(), true);
+      await page.locator('#fee-amount').fill('');
+      assert.equal(await page.locator('#fee-negotiation').isVisible(), false);
+
       await page.goto(base + 'blog.html');
       await page.locator('.read-article[href="blog/co-przyjmujemy-do-lombardu.html"]').click();
       await page.waitForURL('**/blog/co-przyjmujemy-do-lombardu.html');

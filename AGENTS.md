@@ -26,3 +26,5 @@
 - Artykuły mają stałe pole published w formacie YYYY-MM-DD w content/site.json, widoczne na liście i w artykule oraz jako datePublished w BlogPosting. Nowym artykułom nadawaj rzeczywistą datę publikacji; nie zmieniaj daty istniejącego wpisu przy zwykłych poprawkach.
 
 - Cennik ma teraz natywną listę wyboru metalu oraz osobne opcje Na wagę / Monety / Sztabki z objaśnieniami. Bez JS pozostają zwykłe linki do metali. Włączenie złotych produktów w przyszłości jest przewidziane przez flagę comingSoon; snapshot i walidacja grup dostosowują się do flag. Nie włączaj ich bez polecenia użytkownika.
+
+- Kalkulator: kwoty skrótów obejmują 10 000, 40 000, 60 000, 80 000 i 100 000 zł. Dla poprawnej kwoty >=40 000 zł pokazuje komunikat „Opłaty do negocjacji”, także przy wpisywaniu ręcznym i suwaku; niższa lub nieprawidłowa kwota ukrywa komunikat. Komunikat nie zmienia samodzielnie stawek procentowych.
