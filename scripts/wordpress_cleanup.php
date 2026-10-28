@@ -37,9 +37,20 @@ try {
     }
     foreach (glob($root . '/wp-*.php') as $path) $files[] = basename($path);
     $files = array_values(array_unique($files));
+    // Preserve existing backups by moving, not copying, outside the web root.
+    $backupCandidates = ['wp-content-old', '.htaccess.bk', 'wp-content/updraft', 'wp-content/ai1wm-backups',
+        'wp-content/backups', 'wp-content/backup-db', 'wp-content/wpvividbackups',
+        'wp-content/backupbuddy_backups'];
+    foreach (glob($root . '/wp-content/uploads/*', GLOB_ONLYDIR) as $candidate) {
+        if (preg_match('/backup|updraft|wpvivid|ai1wm/i', basename($candidate))) {
+            $backupCandidates[] = substr($candidate, strlen($root) + 1);
+        }
+    }
+    $backups = array_values(array_filter($backupCandidates, fn($name) => file_exists($root . '/' . $name) || is_link($root . '/' . $name)));
     echo 'Tryb: ' . $mode . "\nRozpoznane pliki i katalogi WordPressa: " . json_encode($files) . "\n";
     echo "Pozostałe nazwy w katalogu publicznym (bez zawartości):\n";
     echo json_encode(array_values(array_diff(scandir($root), ['.', '..']))) . "\n";
+    echo 'Istniejące kopie do zachowania poza katalogiem publicznym: ' . json_encode($backups) . "\n";
     $tables = [];
     $db = null;
     if (is_file($root . '/wp-config.php')) {
@@ -78,6 +89,17 @@ try {
     }
     if ($mode === 'audit') { echo "Odczyt zakończony. Niczego nie usunięto.\n"; exit(0); }
     // User explicitly requested full removal and already has a server backup.
+    if (count($backups)) {
+        $safeDirectory = dirname($root) . '/.existing-wordpress-backups';
+        if (is_link($safeDirectory)) throw new Exception('Nieznany katalog zachowania kopii — zatrzymano.');
+        if (!is_dir($safeDirectory) && !mkdir($safeDirectory, 0700)) throw new Exception('Nie udało się przygotować miejsca dla istniejących kopii.');
+        foreach ($backups as $name) {
+            $target = $safeDirectory . '/' . str_replace('/', '--', $name);
+            if (file_exists($target) || is_link($target)) throw new Exception('Nieznany plik docelowy istniejącej kopii — zatrzymano.');
+            if (!rename($root . '/' . $name, $target)) throw new Exception('Nie udało się przenieść istniejącej kopii.');
+            echo 'Zachowano istniejącą kopię poza WWW: ' . $name . "\n";
+        }
+    }
     if ($db && count($tables)) {
         $db->query('SET FOREIGN_KEY_CHECKS=0');
         try {
