@@ -30,7 +30,7 @@ Konfiguracja jest już gotowa:
 - Katalog docelowy: `/home/lombardg/public_html`, potwierdzony diagnostyką SSH.
 - Każdy push main uruchamia publikację. Nie trzeba dodawać kolejnych sekretów ani zmiennych. Opcjonalna zmienna `JDM_DEPLOY_ENABLED=false` zatrzymuje publikację.
 - Ręczne uruchomienie lub ponowienie: Actions → Publikacja JDM → Run workflow na main.
-- Kontrola HTTPS przed wysyłką zatrzymuje publikację, jeśli certyfikat lub dostęp do domeny nie działa; aktywuj SSL w JDM i ponów workflow.
+- Użytkownik polecił publikować teraz, a SSL dokończyć później. Usunięto kontrolę HTTPS przed wysyłką; wynik publikacji jest tymczasowo sprawdzany przez HTTP. Nie wyłączono weryfikacji certyfikatów TLS. Jeśli hosting wymusza HTTPS z nieprawidłowym certyfikatem, kontrola po wysyłce może się nie powieść mimo przesłania plików.
 
 Serwer musi udostępniać polecenie `rsync` przez SSH; automat sprawdza to przed wysyłką. Gdy serwer nie obsługuje rsync, dostosuj transport do SFTP przed aktywacją. Skrypt nie tworzy katalogu docelowego i nie używa `--delete`; wysyła tylko eksport, `.htaccess` na końcu. Nie robi kolejnej kopii. Stary WordPress nie jest automatycznie usuwany — po podmianie jego pozostałe adresy i pliki trzeba uporządkować zgodnie z ustaloną migracją. Przesyłanie poszczególnych plików jest atomowe, cała witryna nie jest przełączana atomowo.
 

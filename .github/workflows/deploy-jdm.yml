@@ -38,17 +38,6 @@ jobs:
           if not re.fullmatch(r'/[A-Za-z0-9_./-]+', path) or '..' in path.split('/') or path.rstrip('/') in ('', '/home', '/var', '/var/www'):
               raise SystemExit('Ustaw JDM_PATH na sprawdzony, bezwzględny katalog domeny.')
           PY
-      - name: Sprawdź HTTPS przed podmianą strony
-        run: |
-          python3 - <<'PY'
-          import urllib.request
-          try:
-              with urllib.request.urlopen('https://lombard-gorzow.pl/', timeout=30) as response:
-                  response.read(1)
-          except Exception as error:
-              raise SystemExit('Nie można potwierdzić HTTPS. Aktywuj certyfikat SSL w JDM i uruchom workflow ponownie. Nie podmieniono plików. Przyczyna: ' + str(error))
-          print('HTTPS działa. Można rozpocząć publikację.')
-          PY
       - name: Odśwież ceny, zbuduj i sprawdź stronę
         run: |
           python3 scripts/update_prices.py
@@ -75,7 +64,7 @@ jobs:
           python3 - <<'PY'
           import os, time, urllib.request
           commit = os.environ['GITHUB_SHA']
-          url = 'https://lombard-gorzow.pl/deployment-version.txt?v=' + commit
+          url = 'http://lombard-gorzow.pl/deployment-version.txt?v=' + commit
           for attempt in range(6):
               try:
                   with urllib.request.urlopen(url, timeout=20) as response:
@@ -86,8 +75,8 @@ jobs:
               if attempt == 5:
                   raise SystemExit('Pliki wysłane, ale publiczna domena nie potwierdziła wdrożonej wersji. Sprawdź katalog domeny i cache JDM.')
               time.sleep(5)
-          with urllib.request.urlopen('https://lombard-gorzow.pl/?v=' + commit, timeout=20) as response:
+          with urllib.request.urlopen('http://lombard-gorzow.pl/?v=' + commit, timeout=20) as response:
               if 'Pożyczki pod zastaw' not in response.read().decode('utf-8'):
                   raise SystemExit('Domena nie wyświetla nowej strony głównej.')
-          print('Potwierdzono publikację: https://lombard-gorzow.pl/ — ' + commit)
+          print('Potwierdzono publikację: http://lombard-gorzow.pl/ — ' + commit)
           PY
