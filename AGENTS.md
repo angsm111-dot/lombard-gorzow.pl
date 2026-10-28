@@ -28,3 +28,5 @@
 - Cennik ma teraz natywną listę wyboru metalu oraz osobne opcje Na wagę / Monety / Sztabki z objaśnieniami. Bez JS pozostają zwykłe linki do metali. Włączenie złotych produktów w przyszłości jest przewidziane przez flagę comingSoon; snapshot i walidacja grup dostosowują się do flag. Nie włączaj ich bez polecenia użytkownika.
 
 - Kalkulator: kwoty skrótów obejmują 10 000, 40 000, 60 000, 80 000 i 100 000 zł. Dla poprawnej kwoty >=40 000 zł pokazuje komunikat „Opłaty do negocjacji”, także przy wpisywaniu ręcznym i suwaku; niższa lub nieprawidłowa kwota ukrywa komunikat. Komunikat nie zmienia samodzielnie stawek procentowych.
+
+- Plik Google Search Console google357c00f8ea992a8f.html musi pozostawać w katalogu głównym i w każdym eksporcie, bez zmiany nazwy ani treści. Nie dodawaj do niego szablonu HTML, metadanych ani przerwy technicznej. Eksport automatycznie obejmuje pliki google<hex>.html; weryfikator JDM sprawdza ich treść pod publicznym adresem bez parametru cache.

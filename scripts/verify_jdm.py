@@ -45,6 +45,15 @@ def main():
     for attempt in range(3):
         marker = fetch(opener, base + '/deployment-version.txt?v=' + commit)
         if marker is not None and marker.strip() == commit:
+            for verification in Path(__file__).resolve().parent.parent.glob('google*.html'):
+                if not re.fullmatch(r'google[0-9a-f]+\.html', verification.name):
+                    continue
+                verification_url = base + '/' + verification.name
+                token = fetch(opener, verification_url)
+                if token is None or token.encode('utf-8') != verification.read_bytes():
+                    print('Nie potwierdzono pliku weryfikacyjnego Google: ' + verification_url, flush=True)
+                    return 1
+                print('Potwierdzono niezmienioną treść pliku Google: ' + verification_url, flush=True)
             homepage = fetch(opener, base + '/?v=' + commit)
             root = Path(__file__).resolve().parent.parent
             if json.loads((root / 'config/maintenance.json').read_text())['enabled']:
