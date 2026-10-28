@@ -59,24 +59,11 @@ jobs:
         env:
           SSHPASS: ${{ secrets.JDM_PASSWORD }}
         run: bash scripts/deploy_jdm.sh
-      - name: Sprawdź publiczną wersję
+      - name: Potwierdź pliki na serwerze
+        env:
+          SSHPASS: ${{ secrets.JDM_PASSWORD }}
         run: |
-          python3 - <<'PY'
-          import os, time, urllib.request
-          commit = os.environ['GITHUB_SHA']
-          url = 'http://lombard-gorzow.pl/deployment-version.txt?v=' + commit
-          for attempt in range(6):
-              try:
-                  with urllib.request.urlopen(url, timeout=20) as response:
-                      if response.read().decode().strip() == commit:
-                          break
-              except Exception:
-                  pass
-              if attempt == 5:
-                  raise SystemExit('Pliki wysłane, ale publiczna domena nie potwierdziła wdrożonej wersji. Sprawdź katalog domeny i cache JDM.')
-              time.sleep(5)
-          with urllib.request.urlopen('http://lombard-gorzow.pl/?v=' + commit, timeout=20) as response:
-              if 'Pożyczki pod zastaw' not in response.read().decode('utf-8'):
-                  raise SystemExit('Domena nie wyświetla nowej strony głównej.')
-          print('Potwierdzono publikację: http://lombard-gorzow.pl/ — ' + commit)
-          PY
+          sshpass -e ssh -T -p "$JDM_PORT" -o StrictHostKeyChecking=yes -o ConnectTimeout=20 \
+            "$JDM_USER@$JDM_HOST" "cd '$JDM_PATH' && printf 'Wersja na dysku JDM: ' && cat deployment-version.txt && ls -l index.html .htaccess && if test -f index.php; then ls -l index.php; fi"
+      - name: Sprawdź publiczną wersję
+        run: python3 -u scripts/verify_jdm.py
