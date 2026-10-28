@@ -176,3 +176,5 @@ main>.fee-section{padding-top:45px;padding-bottom:60px}main>.contact-section{pad
 .other-contact-actions .button{flex:1 1 160px;text-align:center;padding:14px 12px;font-size:13px;line-height:1.4;color:#fff}
 .other-contact-actions .whatsapp-button{background:#25d366;color:#fff;border-color:#25d366}
 @media(max-width:900px){.other-item-icon{min-height:90px}}
+
+.category-other .other-item-icon{min-height:160px;font:700 160px/1 Georgia,serif;color:#782a41;margin-bottom:24px}@media(max-width:900px){.category-other .other-item-icon{min-height:140px;font-size:140px}}
