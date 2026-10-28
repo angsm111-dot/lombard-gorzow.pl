@@ -19,8 +19,11 @@ function literal($value) {
 function removePath($path) {
     if (is_link($path) || is_file($path)) {
         if (!@unlink($path)) {
-            // JDM protects its own mu-plugin. Keep that one file outside WWW.
-            if (str_ends_with($path, '/mu-plugins/jdm.php')) return false;
+            // Host-owned files in wp-content may be protected. Isolate leftovers.
+            if (str_starts_with($path, '/home/lombardg/public_html/wp-content/')) {
+                echo 'Chroniony plik hostingu: ' . substr($path, strlen('/home/lombardg/public_html/')) . "\n";
+                return false;
+            }
             throw new Exception('Nie udało się usunąć pliku.');
         }
     } elseif (is_dir($path)) {
@@ -29,7 +32,10 @@ function removePath($path) {
             if (!$entry->isDot() && !removePath($entry->getPathname())) $complete = false;
         }
         if (!$complete) return false;
-        if (!rmdir($path)) throw new Exception('Nie udało się usunąć katalogu.');
+        if (!@rmdir($path)) {
+            if (str_starts_with($path, '/home/lombardg/public_html/wp-content/')) return false;
+            throw new Exception('Nie udało się usunąć katalogu.');
+        }
     }
     return true;
 }
@@ -122,7 +128,7 @@ try {
             $target = dirname($root) . '/.jdm-managed-wordpress-remnants';
             if (file_exists($target) || is_link($target)) throw new Exception('Nieznany docelowy katalog pozostałości — zatrzymano.');
             if (!rename($root . '/' . $name, $target)) throw new Exception('Nie udało się przenieść chronionego pliku JDM poza WWW.');
-            echo "Chroniony plik hostingu jdm.php pozostał poza public_html w .jdm-managed-wordpress-remnants; konto nie może go usunąć.\n";
+            echo "Chronione pliki hostingu pozostały poza public_html w .jdm-managed-wordpress-remnants; konto nie może ich usunąć.\n";
         }
         echo 'Usunięto z katalogu strony: ' . $name . "\n";
     }
