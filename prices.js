@@ -108,7 +108,11 @@
     section.dataset.priceMetal = metal;
     section.dataset.priceKind = kind;
     section.querySelector('.purity-view').hidden = kind !== 'purity';
-    section.querySelector('.products-view').hidden = kind === 'purity';
+    section.querySelector('.products-view').hidden = kind === 'purity' || view.comingSoon;
+    section.querySelector('.price-coming-soon').hidden = !view.comingSoon;
+    status.hidden = !!view.comingSoon;
+    refreshButton.hidden = !!view.comingSoon;
+    document.querySelector('.reading-section').hidden = !!view.comingSoon;
     section.querySelector('.jewelry-premium').hidden = kind !== 'purity';
     panel.style.minHeight = '';
     if (kind === 'purity') {
@@ -129,20 +133,28 @@
       section.querySelector('caption').textContent = view.caption;
       purityHeight = Math.max(purityHeight, panel.getBoundingClientRect().height);
       panel.style.minHeight = purityHeight + 'px';
-    } else {
+    } else if (!view.comingSoon) {
       document.querySelector('#product-caption').textContent = view.caption;
       search.placeholder = kind === 'coins' ? 'Np. Krugerrand, Liść Klonowy, 1/10 oz' : 'Np. 1 g, 10 g, 1 uncja';
       renderProducts();
     }
     tabs.querySelectorAll('a').forEach(link => {
       const key = link.dataset.metal;
-      const nextKind = views[key + '/' + kind] ? kind : 'purity';
+      const nextKind = views[key + '/' + kind] && !views[key + '/' + kind].comingSoon ? kind : 'purity';
       link.href = views[key + '/' + nextKind].route;
       if (key === metal) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
     });
     kindTabs.hidden = !views[metal + '/coins'];
     const links = ['purity', 'coins', 'bars'].filter(type => views[metal + '/' + type]).map(type => {
+      if (views[metal + '/' + type].comingSoon) {
+        const unavailable = document.createElement('span');
+        unavailable.className = 'kind-unavailable';
+        unavailable.setAttribute('aria-disabled', 'true');
+        unavailable.append({ coins: 'Monety', bars: 'Sztabki' }[type]);
+        const note = document.createElement('small'); note.textContent = 'W budowie'; unavailable.append(note);
+        return unavailable;
+      }
       const link = document.createElement('a');
       link.dataset.kind = type;
       link.href = views[metal + '/' + type].route;
@@ -157,7 +169,7 @@
     const view = views[nextMetal + '/' + nextKind];
     if (!view || (nextMetal === metal && nextKind === kind)) return;
     if (nextKind === 'purity') purityEntries(cached, nextMetal);
-    else productsFor(cached, nextMetal, nextKind);
+    else if (!view.comingSoon) productsFor(cached, nextMetal, nextKind);
     const top = tabs.getBoundingClientRect().top;
     metal = nextMetal;
     kind = nextKind;
@@ -185,7 +197,7 @@
     if (!view) return;
     try {
       if (view.kind === 'purity') purityEntries(cached, view.metal);
-      else productsFor(cached, view.metal, view.kind);
+      else if (!view.comingSoon) productsFor(cached, view.metal, view.kind);
       event.preventDefault();
       changeView(view.metal, view.kind, true);
     } catch { /* Ordinary links remain a fallback. */ }
@@ -208,7 +220,7 @@
       const data = await response.json();
       if (data.status !== 'ok') throw new Error('Invalid feed');
       ['gold', 'silver', 'platinum', 'palladium'].forEach(key => purityEntries(data, key));
-      for (const key of ['gold', 'silver']) for (const type of ['coins', 'bars']) productsFor(data, key, type);
+      for (const type of ['coins', 'bars']) productsFor(data, 'silver', type);
       cached = data;
       fresh = true;
       failed = false;
