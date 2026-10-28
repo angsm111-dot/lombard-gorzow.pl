@@ -23,6 +23,7 @@ ROUTES = {'przyjmujemy': 'co-przyjmujemy.html', 'sprzedaz': 'na-sprzedaz.html', 
           'kalkulator': 'kalkulator-oplat.html', 'blog': 'blog.html', 'kontakt': 'kontakt.html',
           'wycena': 'kontakt.html#kontakt', 'zasady': 'co-przyjmujemy.html'}
 PAGES = []
+WHATSAPP_WIDGET = '<a class="floating-whatsapp" href="https://wa.me/48601775146" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp — napisz do Lombardu Sezam" title="Napisz na WhatsApp"><svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M26 6a13 13 0 0 0-21 15L3 29l8-2A13 13 0 0 0 26 6Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 9c-3 1-2 6 2 10s8 5 10 2l-4-3-2 2c-3-1-5-3-6-6l2-1Z" fill="currentColor"/></svg></a>'
 CANONICAL_PATHS = {'cennik.html': 'cennik-zlota.html'}
 
 def escape(s):
@@ -43,7 +44,7 @@ def page(path, title, description, content, scripts=(), article=None):
     canonical_path = CANONICAL_PATHS.get(path, path)
     canonical = BASE + ('/' if canonical_path == 'index.html' else '/' + canonical_path)
     header = links(DATA['header'], prefix)
-    header = header.replace('>Cennik skupu złota</a>', '>Cennik skupu</a>').replace(f'href="{prefix}cennik-zlota.html">Cennik skupu', f'href="{prefix}cennik.html">Cennik skupu')
+    header = header.replace('>Cennik skupu złota</a>', '>Cennik skupu metali szlachetnych</a>').replace(f'href="{prefix}cennik-zlota.html">Cennik skupu', f'href="{prefix}cennik.html">Cennik skupu')
     header = header.replace(f'href="{prefix}{path}"', f'href="{prefix}{path}" aria-current="page"')
     if path.startswith(('cennik-', 'monety-', 'sztabki-')):
         header = header.replace(f'href="{prefix}cennik.html"', f'href="{prefix}cennik.html" aria-current="page"')
@@ -63,7 +64,7 @@ def page(path, title, description, content, scripts=(), article=None):
 <script type="application/ld+json">{schemas_json}</script>
 <script defer src="{prefix}app.js?v={revision('app.js')}"></script>
 {script_tags}
-</head><body><a class="skip-link" href="#tresc">Przejdź do treści</a>{header}<main id="tresc">{links(content, prefix)}</main>{links(DATA['footer'], prefix)}</body></html>'''
+</head><body><a class="skip-link" href="#tresc">Przejdź do treści</a>{header}<main id="tresc">{links(content, prefix)}</main>{links(DATA['footer'], prefix)}{WHATSAPP_WIDGET}</body></html>'''
     target = ROOT / path
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(body)

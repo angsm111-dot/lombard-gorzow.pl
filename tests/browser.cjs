@@ -45,7 +45,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       await page.goto(base);
       assert.equal(await page.locator('#main-navigation').isVisible(), false);
       await page.locator('.mobile-navigation summary').click();
-      await page.locator('#main-navigation').getByRole('link', { name: 'Cennik skupu', exact: true }).click();
+      await page.locator('#main-navigation').getByRole('link', { name: 'Cennik skupu metali szlachetnych', exact: true }).click();
       await page.waitForURL('**/cennik.html');
       assert.equal(await page.locator('[data-price-metal]').getAttribute('data-price-metal'), 'gold');
       assert.equal(await page.locator('#price-metal-select').isVisible(), true);

@@ -30,3 +30,5 @@
 - Kalkulator: kwoty skrótów obejmują 10 000, 40 000, 60 000, 80 000 i 100 000 zł. Dla poprawnej kwoty >=40 000 zł pokazuje komunikat „Opłaty do negocjacji”, także przy wpisywaniu ręcznym i suwaku; niższa lub nieprawidłowa kwota ukrywa komunikat. Komunikat nie zmienia samodzielnie stawek procentowych.
 
 - Plik Google Search Console google357c00f8ea992a8f.html musi pozostawać w katalogu głównym i w każdym eksporcie, bez zmiany nazwy ani treści. Nie dodawaj do niego szablonu HTML, metadanych ani przerwy technicznej. Eksport automatycznie obejmuje pliki google<hex>.html; weryfikator JDM sprawdza ich treść pod publicznym adresem bez parametru cache.
+
+- Wspólny szablon dodaje pływający przycisk WhatsApp w prawym dolnym rogu na mobile i desktopie. Karta kontaktu ma nagłówek KONTAKT bez osobnej ikony WhatsApp nad przyciskami. Menu: Cennik skupu metali szlachetnych. Kalkulator ma kolejność DOM: kwota → gotowe kwoty → suwak → okres → komunikat negocjacji → wynik. Zachowaj tę kolejność i działanie powiadomienia od 40 000 zł.
