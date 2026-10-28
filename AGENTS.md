@@ -34,3 +34,5 @@
 - Wspólny szablon dodaje pływający przycisk WhatsApp w prawym dolnym rogu na mobile i desktopie. Karta kontaktu ma nagłówek KONTAKT bez osobnej ikony WhatsApp nad przyciskami. Menu: Cennik skupu metali szlachetnych. Kalkulator ma kolejność DOM: kwota → gotowe kwoty → suwak → okres → komunikat negocjacji → wynik. Zachowaj tę kolejność i działanie powiadomienia od 40 000 zł.
 
 - Pełny cennik odświeża ceny co 5 minut. Timer przy caption liczy do faktycznego odświeżenia, resetuje się po próbie, przy błędzie mówi o ponownej próbie; bez JS jest ukryty. Nie wracaj do interwału minutowego bez zmiany timera. Strona główna zachowuje własne odświeżanie home-prices.js.
+
+- Suwak kalkulatora używa 151 pozycji mapowanych na kwoty: 50 zł, 100–2000 zł co 100, 2200–10000 zł co 200, 11000–100000 zł co 1000. Pozycje 0–150 nie oznaczają bezpośrednio kwoty. Pole ręczne nadal przyjmuje dokładną kwotę z groszami; aria-valuetext suwaka podaje złote.

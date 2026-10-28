@@ -80,7 +80,7 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       assert.equal(await page.locator('#fee-negotiation').isVisible(), false);
       await page.locator('#fee-amount').fill('40000');
       assert.equal(await page.locator('#fee-negotiation').isVisible(), true);
-      await page.locator('#fee-range').evaluate(e => { e.value = 80000; e.dispatchEvent(new Event('input', { bubbles: true })); });
+      await page.locator('#fee-range').evaluate(e => { e.value = 130; e.dispatchEvent(new Event('input', { bubbles: true })); });
       assert.equal(await page.locator('#fee-negotiation').isVisible(), true);
       await page.locator('#fee-amount').fill('');
       assert.equal(await page.locator('#fee-negotiation').isVisible(), false);
