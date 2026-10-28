@@ -27,9 +27,11 @@ W repozytorium GitHub → Settings → Secrets and variables → Actions:
 
 - Secrets → `JDM_PASSWORD`: hasło SSH z panelu JDM.
 - Secrets → `JDM_KNOWN_HOSTS`: klucz publiczny hosta SSH w formacie OpenSSH known_hosts dla `[web16.jdm.pl]:2233`. Klucz lub jego odcisk potwierdź w JDM; nie wyłączaj kontroli tożsamości hosta. Samo hasło nie zastępuje weryfikacji klucza serwera.
-- Variables → `JDM_PATH`: dokładny, bezwzględny katalog dokumentów domeny z panelu; nie zgaduj jego nazwy.
+- Katalog docelowy jest już wpisany w workflow: `/home/lombardg/public_html`. Odczyt SSH użytkownika potwierdził tam WordPress i dostępność rsync; nie trzeba tworzyć zmiennej JDM_PATH.
 - Variables → `JDM_DEPLOY_ENABLED`: ustaw `true` dopiero po potwierdzeniu katalogu i konfiguracji sekretów. Następnie uruchom Actions → Publikacja JDM → Run workflow na main. Kolejne push uruchamiają publikację samodzielnie.
 
 Serwer musi udostępniać polecenie `rsync` przez SSH; automat sprawdza to przed wysyłką. Gdy serwer nie obsługuje rsync, dostosuj transport do SFTP przed aktywacją. Skrypt nie tworzy katalogu docelowego i nie używa `--delete`; wysyła tylko eksport, `.htaccess` na końcu. Nie robi kolejnej kopii. Stary WordPress nie jest automatycznie usuwany — po podmianie jego pozostałe adresy i pliki trzeba uporządkować zgodnie z ustaloną migracją. Przesyłanie poszczególnych plików jest atomowe, cała witryna nie jest przełączana atomowo.
 
 Workflow kończy się sukcesem dopiero po odczytaniu numeru wdrożonego commita i nowego nagłówka z publicznej domeny HTTPS. Nie wystarczy samo przesłanie plików. Nieudana walidacja cen lub strony zatrzymuje publikację przed połączeniem z hostingiem.
+
+Potwierdzenie z diagnostyki SSH: katalog początkowy i domowy `/home/lombardg`; WordPress w `/home/lombardg/public_html`; rsync dostępny. Publiczny klucz hosta odczytany podczas pierwszego połączenia jest w Summary workflow „Sprawdź połączenie JDM”. Można go przypiąć przez JDM_KNOWN_HOSTS dla kolejnych połączeń; jest to kontynuacja pierwszego zaufania, nie niezależna weryfikacja JDM.

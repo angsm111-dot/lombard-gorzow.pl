@@ -21,7 +21,7 @@ jobs:
       JDM_HOST: web16.jdm.pl
       JDM_PORT: '2233'
       JDM_USER: lombardg
-      JDM_PATH: ${{ vars.JDM_PATH }}
+      JDM_PATH: /home/lombardg/public_html
       JDM_PASSWORD: ${{ secrets.JDM_PASSWORD }}
       JDM_KNOWN_HOSTS: ${{ secrets.JDM_KNOWN_HOSTS }}
     steps:
