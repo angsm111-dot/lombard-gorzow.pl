@@ -23,7 +23,7 @@ ROUTES = {'przyjmujemy': 'co-przyjmujemy.html', 'sprzedaz': 'na-sprzedaz.html', 
           'kalkulator': 'kalkulator-oplat.html', 'blog': 'blog.html', 'kontakt': 'kontakt.html',
           'wycena': 'kontakt.html#kontakt', 'zasady': 'co-przyjmujemy.html'}
 PAGES = []
-WHATSAPP_WIDGET = '<a class="floating-whatsapp" href="https://wa.me/48601775146" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp — napisz do Lombardu Sezam" title="Napisz na WhatsApp"><svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M26 6a13 13 0 0 0-21 15L3 29l8-2A13 13 0 0 0 26 6Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 9c-3 1-2 6 2 10s8 5 10 2l-4-3-2 2c-3-1-5-3-6-6l2-1Z" fill="currentColor"/></svg></a>'
+WHATSAPP_WIDGET = '<a class="floating-whatsapp" href="https://wa.me/48601775146" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp — napisz do Lombardu Sezam" title="Napisz na WhatsApp"><span class="floating-whatsapp-label">WhatsApp</span><svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M26 6a13 13 0 0 0-21 15L3 29l8-2A13 13 0 0 0 26 6Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 9c-3 1-2 6 2 10s8 5 10 2l-4-3-2 2c-3-1-5-3-6-6l2-1Z" fill="currentColor"/></svg></a>'
 CANONICAL_PATHS = {'cennik.html': 'cennik-zlota.html'}
 
 def escape(s):

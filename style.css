@@ -224,3 +224,9 @@ header .brand-sezam img{width:300px;max-width:100%;height:auto}
 
 .price-caption-row{flex-wrap:nowrap}#purity-caption-label{flex:1;min-width:0}.price-countdown{flex:0 0 auto}.price-clock{flex-shrink:0}
 @media(max-width:450px){#price-countdown-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.price-countdown{gap:5px}}
+
+.floating-whatsapp{display:flex;gap:8px;width:auto;padding:0 15px;border-radius:32px}
+.floating-whatsapp-label{font-size:13px;font-weight:700;line-height:1;color:#fff}
+.floating-whatsapp svg{flex-shrink:0}
+@media(max-width:600px){.floating-whatsapp{width:auto;padding:0 12px;gap:6px}.floating-whatsapp-label{font-size:12px}}
+@media print{.floating-whatsapp{display:none}}
