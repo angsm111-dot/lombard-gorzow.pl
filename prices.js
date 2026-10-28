@@ -13,6 +13,11 @@
   const body = document.querySelector('#price-rows');
   const status = document.querySelector('#price-status');
   const refreshButton = document.querySelector('#refresh-prices');
+  const countdown = section.querySelector('.price-countdown');
+  const countdownLabel = section.querySelector('#price-countdown-label');
+  const countdownValue = section.querySelector('#price-countdown-value');
+  const refreshInterval = 5 * 60 * 1000;
+  let nextRefreshAt = Date.now() + refreshInterval;
   const list = document.querySelector('#product-price-list');
   const search = document.querySelector('#product-search');
   const more = document.querySelector('#product-more');
@@ -62,7 +67,7 @@
     const stamp = Number.isFinite(fetched.getTime()) ? date.format(fetched) : 'data niepodana';
     body.dataset.snapshotDate = stamp;
     if (fresh) {
-      status.textContent = 'Notowania: ' + stamp + ' · ' + (kind === 'purity' ? 'Ceny za 1 gram.' : 'Ceny za 1 sztukę.') + ' Odświeżanie co minutę.';
+      status.textContent = 'Notowania: ' + stamp + ' · ' + (kind === 'purity' ? 'Ceny za 1 gram.' : 'Ceny za 1 sztukę.') + ' Odświeżanie co 5 minut.';
       status.dataset.state = 'ready';
     } else {
       status.textContent = (failed ? 'Nie potwierdzono aktualności cen. ' : '') + 'Ostatnio pobrany cennik · notowania: ' + stamp + '. Aktualność potwierdzisz telefonicznie.';
@@ -131,7 +136,7 @@
         return row;
       });
       body.replaceChildren(...rows);
-      section.querySelector('caption').textContent = view.caption;
+      section.querySelector('#purity-caption-label').textContent = view.caption;
       purityHeight = Math.max(purityHeight, panel.getBoundingClientRect().height);
       panel.style.minHeight = purityHeight + 'px';
     } else if (!view.comingSoon) {
@@ -171,6 +176,7 @@
     });
     kindTabs.replaceChildren(...links);
     updateStatus();
+    updateCountdown();
   }
   function changeView(nextMetal, nextKind, push) {
     const view = views[nextMetal + '/' + nextKind];
@@ -220,9 +226,21 @@
     const view = Object.values(views).find(view => location.pathname.endsWith('/' + view.route)) || views['gold/purity'];
     changeView(view.metal, view.kind, false);
   });
+  function updateCountdown() {
+    countdown.hidden = !!views[metal + '/' + kind].comingSoon;
+    if (loading) {
+      countdownLabel.textContent = 'Odświeżanie';
+      countdownValue.textContent = '…';
+      return;
+    }
+    const seconds = Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000));
+    countdownLabel.textContent = failed ? 'Ponowna próba za' : 'Odświeżenie za';
+    countdownValue.textContent = String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
+  }
   async function refresh() {
     if (loading) return;
     loading = true;
+    updateCountdown();
     refreshButton.disabled = true;
     body.setAttribute('aria-busy', 'true');
     list.setAttribute('aria-busy', 'true');
@@ -240,11 +258,14 @@
       failed = false;
       render();
     } catch { fresh = false; failed = true; updateStatus(); }
-    finally { loading = false; refreshButton.disabled = false; body.setAttribute('aria-busy', 'false'); list.setAttribute('aria-busy', 'false'); }
+    finally { loading = false; nextRefreshAt = Date.now() + refreshInterval; updateCountdown(); refreshButton.disabled = false; body.setAttribute('aria-busy', 'false'); list.setAttribute('aria-busy', 'false'); }
   }
   refreshButton.addEventListener('click', refresh);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
-  setInterval(() => { if (!document.hidden) refresh(); }, 60000);
+  setInterval(() => {
+    updateCountdown();
+    if (!document.hidden && !loading && Date.now() >= nextRefreshAt) refresh();
+  }, 1000);
   render();
   refresh();
 })();
