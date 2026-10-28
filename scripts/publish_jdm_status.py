@@ -28,8 +28,8 @@ except urllib.error.HTTPError as error:
     api('/git/refs', 'POST', {'ref': 'refs/heads/' + branch, 'sha': os.environ['GITHUB_SHA']})
 
 report = {'commit': os.environ['GITHUB_SHA'], 'run': os.environ['GITHUB_RUN_ID'],
-          'status': os.environ['DEPLOY_STATUS']}
-for name in ('server', 'public'):
+          'status': os.environ['DEPLOY_STATUS'], 'steps': json.loads(os.environ.get('DEPLOY_STEPS', '{}'))}
+for name in ('build', 'upload', 'server', 'public'):
     path = Path(os.environ['RUNNER_TEMP']) / ('jdm-' + name + '.txt')
     report[name] = path.read_text() if path.exists() else 'Step not reached'
 # Do not rely on GitHub log masking for a file stored in Git.

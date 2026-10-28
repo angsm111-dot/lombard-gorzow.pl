@@ -29,6 +29,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Sprawdź konfigurację
+        id: configuration
         run: |
           test -n "$JDM_PASSWORD" || { echo 'Brak sekretu JDM_PASSWORD'; exit 1; }
           test -s config/jdm_known_hosts
@@ -39,15 +40,19 @@ jobs:
               raise SystemExit('Ustaw JDM_PATH na sprawdzony, bezwzględny katalog domeny.')
           PY
       - name: Odśwież ceny, zbuduj i sprawdź stronę
+        id: build
         run: |
-          python3 scripts/update_prices.py
-          python3 scripts/export.py
-          python3 -m unittest discover -s tests -q
-          mkdir -p dist/public
-          python3 -m zipfile -e dist/lombard-gorzow.zip dist/public
-          rm dist/public/WDROZENIE.txt
-          printf '%s\n' "$GITHUB_SHA" > dist/public/deployment-version.txt
+          {
+            python3 scripts/update_prices.py
+            python3 scripts/export.py
+            python3 -m unittest discover -s tests -q
+            mkdir -p dist/public
+            python3 -m zipfile -e dist/lombard-gorzow.zip dist/public
+            rm dist/public/WDROZENIE.txt
+            printf '%s\n' "$GITHUB_SHA" > dist/public/deployment-version.txt
+          } 2>&1 | tee "$RUNNER_TEMP/jdm-build.txt"
       - name: Przygotuj połączenie SSH
+        id: ssh
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq sshpass rsync
@@ -56,9 +61,10 @@ jobs:
           cp config/jdm_known_hosts "$HOME/.ssh/known_hosts"
           chmod 600 "$HOME/.ssh/known_hosts"
       - name: Wyślij stronę na JDM
+        id: upload
         env:
           SSHPASS: ${{ secrets.JDM_PASSWORD }}
-        run: bash scripts/deploy_jdm.sh
+        run: bash scripts/deploy_jdm.sh 2>&1 | tee "$RUNNER_TEMP/jdm-upload.txt"
       - name: Potwierdź pliki na serwerze
         env:
           SSHPASS: ${{ secrets.JDM_PASSWORD }}
@@ -72,4 +78,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DEPLOY_STATUS: ${{ job.status }}
+          DEPLOY_STEPS: ${{ toJSON(steps) }}
         run: python3 scripts/publish_jdm_status.py
