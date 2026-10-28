@@ -1,7 +1,31 @@
 {
-  "commit": "1fc1d9f0d60d94efe105faef1057013bc533b38e",
-  "run": "40712011731",
-  "status": "failure",
-  "server": "Step not reached",
-  "public": "Step not reached"
+  "commit": "30b8c422ebf1e54ba0ec7e6c77a22206887fd768",
+  "run": "40712154529",
+  "status": "success",
+  "steps": {
+    "configuration": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "build": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "ssh": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "upload": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    }
+  },
+  "build": "Built 19 static HTML pages, sitemap and robots.txt.\nSaved validated prices for gold, silver, platinum and palladium.\nBuilt 19 static HTML pages, sitemap and robots.txt.\n/home/runner/work/lombard-gorzow.pl/lombard-gorzow.pl/dist/lombard-gorzow.zip 1658681 bytes; 19 HTML pages.\n----------------------------------------------------------------------\nRan 8 tests in 0.067s\n\nOK\n",
+  "upload": "ERROR: .htaccess failed verification -- update discarded.\nrsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1356) [sender=3.2.7]\n",
+  "server": "Wersja na dysku JDM: b16b4cd598c776f5ab1b6b7163263a365cb6ae8d\n-rw-r--r-- 1 lombardg lombardg  538 Oct 28 14:56 .htaccess\n-rw-r--r-- 1 lombardg lombardg 7149 Oct 28 15:04 index.html\n-rw-r--r-- 1 lombardg lombardg 405 Oct 26  2024 index.php\n",
+  "public": "Adresy DNS domeny: 104.21.0.162, 172.67.151.80, 2606:4700:3031::6815:a2, 2606:4700:3035::ac43:9750\nPrzekierowanie 301: http://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768 -> https://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nHTTP 200: https://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nDomena zwróciła inną treść niż numer wdrożenia.\nPrzekierowanie 301: http://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768 -> https://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nHTTP 200: https://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nDomena zwróciła inną treść niż numer wdrożenia.\nPrzekierowanie 301: http://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768 -> https://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nHTTP 200: https://lombard-gorzow.pl/deployment-version.txt?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nDomena zwróciła inną treść niż numer wdrożenia.\nDiagnostyka strony głównej i jawnego index.html:\nPrzekierowanie 301: http://lombard-gorzow.pl/?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768 -> https://lombard-gorzow.pl/?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nHTTP 200: https://lombard-gorzow.pl/?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nTytuł strony: Lombard Gorzów is under maintenance\nPrzekierowanie 301: http://lombard-gorzow.pl/index.html?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768 -> https://lombard-gorzow.pl/index.html?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nHTTP 200: https://lombard-gorzow.pl/index.html?v=30b8c422ebf1e54ba0ec7e6c77a22206887fd768\nTytuł strony: Lombard Gorzów — pożyczki pod zastaw | Sezam\nNowy index.html jest dostępny, ale serwer pod / wybiera inną stronę. Sprawdź priorytet index.php w JDM.\nPliki przesłano na JDM, ale publikacja pod domeną nie została potwierdzona. Przyczyny są podane powyżej.\n"
 }
