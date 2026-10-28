@@ -12,16 +12,16 @@ const base=process.env.SITE_URL||'http://127.0.0.1:5180/';
   await p.route('**/api/prices',r=>r.fulfill({status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'},body:JSON.stringify({...snapshot,status:'ok'})}));
   await p.goto(base+'cennik.html',{waitUntil:'networkidle'});
   const note=await p.locator('.jewelry-premium').boundingBox();assert.ok(note.height<115,'compact notice '+width);
-  await p.locator('.metal-tabs').evaluate(e=>window.scrollTo({top:e.getBoundingClientRect().top+scrollY-40,behavior:'instant'}));
+  await p.locator('.price-controls').evaluate(e=>window.scrollTo({top:e.getBoundingClientRect().top+scrollY-40,behavior:'instant'}));
   for(const [label,key,rows] of [['Srebro','silver',9],['Platyna','platinum',4],['Pallad','palladium',4],['Złoto','gold',9]]){
-   const before=await p.locator('.metal-tabs').boundingBox();
-   await p.getByRole('navigation',{name:'Wybierz metal'}).getByRole('link',{name:label,exact:true}).click();
+   const before=await p.locator('.price-controls').boundingBox();
+   await p.locator('#price-metal-select').selectOption(key);
    await p.waitForFunction(k=>document.querySelector('[data-price-metal]').dataset.priceMetal===k,key);
    await p.waitForTimeout(70);
-   const after=await p.locator('.metal-tabs').boundingBox();
+   const after=await p.locator('.price-controls').boundingBox();
    assert.ok(Math.abs(before.y-after.y)<2,JSON.stringify({width,label,before:before.y,after:after.y}));
    assert.equal(await p.locator('#price-rows tr').count(),rows);
-   assert.equal(await p.getByRole('link',{name:label,exact:true}).getAttribute('aria-current'),'page');
+   assert.equal(await p.locator('#price-metal-select').inputValue(),key);
    assert.equal(documentRequests,1,'no page reload');
    assert.ok(await p.evaluate(()=>scrollY)>0,'not scrolled to top');
   }

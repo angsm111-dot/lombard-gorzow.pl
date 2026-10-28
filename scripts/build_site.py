@@ -171,8 +171,10 @@ for view in VIEWS.values():
         if VIEWS[metal + '/' + candidate]['comingSoon']:
             kind_links.append(f'<span class="kind-unavailable" aria-disabled="true">{label}<small>W budowie</small></span>')
             continue
-        kind_links.append(f'<a data-kind="{candidate}" href="{target}"{current}>{label}</a>')
+        kind_links.append(f'<a data-kind="{candidate}" href="{target}"{current}><span>{"Na wagę" if candidate == "purity" else label}</span><small>{"Biżuteria i złom" if candidate == "purity" else "Cena za sztukę"}</small></a>')
     kind_tabs = '<nav class="kind-tabs" aria-label="Rodzaj cennika"' + (' hidden' if not kind_links else '') + '>' + ''.join(kind_links) + '</nav>'
+    metal_options = ''.join(f'<option value="{key}"' + (' selected' if key == metal else '') + f'>{item[1]}</option>' for key, item in METALS.items())
+    kind_step_hidden = '' if kind_links else ' hidden'
     rows = ''
     for purity, item in sorted(SNAPSHOT['metals'][metal]['purities'].items(), key=lambda pair: int(pair[0])):
         price = f"{item['price']:,.2f}".replace(',', ' ').replace('.', ',')
@@ -187,13 +189,13 @@ for view in VIEWS.values():
     availability_hidden = '' if view['comingSoon'] else ' hidden'
     prices_hidden = ' hidden' if view['comingSoon'] else ''
     content = intro(view['heading'], view['intro'])
-    content += f'''<section class="metal-content" data-price-metal="{metal}" data-price-kind="{kind}"><div class="price-controls">{tabs}{kind_tabs}</div>
+    content += f'''<section class="metal-content" data-price-metal="{metal}" data-price-kind="{kind}"><div class="price-controls"><div class="metal-step"><label class="metal-picker" for="price-metal-select">Metal<select id="price-metal-select">{metal_options}</select></label><div class="metal-fallback"><span class="price-choice-label">Metal</span>{tabs}</div></div><div class="kind-step"{kind_step_hidden}><span class="price-choice-label">Co chcesz wycenić?</span>{kind_tabs}</div></div>
 <aside class="jewelry-premium" aria-label="Indywidualna wycena biżuterii"{table_hidden}><p><strong>Za biżuterię płacimy więcej niż za złom.</strong> Wyceniamy ją indywidualnie.</p></aside>
 <div class="gold-prices"><div class="price-coming-soon"{availability_hidden}><h2>W budowie</h2><p>Przygotowujemy cennik. Zapytaj o wycenę telefonicznie lub przez WhatsApp.</p><a class="button" href="kontakt.html">Kontakt →</a></div><div class="purity-view"{table_hidden}><p class="purity-unit-note">Ceny za gram według próby.</p><table><caption>Ceny skupu {METALS[metal][0]} za 1 gram</caption><thead><tr><th scope="col">Próba</th><th scope="col">Cena za gram</th></tr></thead><tbody id="price-rows" data-has-prices="true" data-snapshot-date="{stamp}">{rows}</tbody></table></div>
 <div class="products-view"{product_hidden}><h2 id="product-caption">{escape(view['caption'])}</h2><p class="product-unit-note">Ceny skupu za 1 sztukę.</p><label class="product-search">Znajdź produkt<input type="search" id="product-search" placeholder="Wpisz nazwę lub wagę, np. 1 oz, 10 g" autocomplete="off"></label><p id="product-count" class="product-count" role="status">Pozycji w cenniku: {len(products)}</p><div id="product-price-list" role="list" aria-label="Ceny produktów">{product_rows}</div><button type="button" class="product-more" id="product-more" hidden>Pokaż kolejne</button></div>
 <p id="price-status" class="price-note" role="status"{prices_hidden}>Ostatnio pobrany cennik · notowania: {stamp} (Polska). Aktualność cen potwierdzisz telefonicznie.</p><button type="button" id="refresh-prices" class="price-refresh"{prices_hidden}>Odśwież cennik</button><noscript><p>Automatyczne odświeżanie i wyszukiwanie wymaga JavaScript. Wybór metalu i rodzaju cennika działa przez powyższe linki.</p></noscript></div></section>'''
     content += '<section class="reading-section"' + (' hidden' if view['comingSoon'] else '') + '><h2>' + escape(view['readingTitle']) + '</h2>' + ''.join('<p>' + escape(paragraph) + '</p>' for paragraph in view['reading']) + '<a class="button" href="kontakt.html">Zapytaj o wycenę →</a></section>'
-    switch_data = json.dumps({'fetchedAt': SNAPSHOT['fetchedAt'], 'metals': SNAPSHOT['metals'], 'products': {k: v for k, v in SNAPSHOT.get('products', {}).items() if k not in ('goldCoins', 'goldBars')}, 'views': VIEWS}, ensure_ascii=False).replace('<', '\u003c')
+    switch_data = json.dumps({'fetchedAt': SNAPSHOT['fetchedAt'], 'metals': SNAPSHOT['metals'], 'products': {k: v for k, v in SNAPSHOT.get('products', {}).items() if k not in ('goldCoins', 'goldBars') or not VIEWS['gold/coins' if k == 'goldCoins' else 'gold/bars']['comingSoon']}, 'views': VIEWS}, ensure_ascii=False).replace('<', '\u003c')
     content += '<script id="metal-price-snapshot" type="application/json">' + switch_data + '</script>'
     page(view['route'], view['title'], view['description'], content, scripts=('prices.js',))
     if metal == 'gold' and kind == 'purity':

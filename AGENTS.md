@@ -24,3 +24,5 @@
 - Na prośbę użytkownika formularz mailowy jest wyłączony (brak formularza w kontakcie). Monety i sztabki złote mają comingSoon=true w generatorze, nieaktywne zakładki „W budowie” i strony bez list produktów; JS respektuje ten stan i nie przywraca cen po odświeżeniu. Nie włączaj ich przy zwykłych aktualizacjach. Srebro i złoto według próby pozostają aktywne.
 
 - Artykuły mają stałe pole published w formacie YYYY-MM-DD w content/site.json, widoczne na liście i w artykule oraz jako datePublished w BlogPosting. Nowym artykułom nadawaj rzeczywistą datę publikacji; nie zmieniaj daty istniejącego wpisu przy zwykłych poprawkach.
+
+- Cennik ma teraz natywną listę wyboru metalu oraz osobne opcje Na wagę / Monety / Sztabki z objaśnieniami. Bez JS pozostają zwykłe linki do metali. Włączenie złotych produktów w przyszłości jest przewidziane przez flagę comingSoon; snapshot i walidacja grup dostosowują się do flag. Nie włączaj ich bez polecenia użytkownika.

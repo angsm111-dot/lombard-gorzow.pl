@@ -30,11 +30,27 @@ const base=process.env.SITE_URL||'http://127.0.0.1:5198/';
   await page.locator('#product-search').fill('nieistniejacy-produkt');assert.equal(await page.locator('.product-price-row').count(),0);
   await page.locator('.kind-tabs a[data-kind="bars"]').click();await page.waitForURL('**/sztabki-srebrne.html');
   assert.equal(await page.locator('.product-price-row').count(),Math.min(12,snapshot.products.silverBars.length));
-  await page.locator('.metal-tabs a[data-metal="gold"]').click();await page.waitForURL('**/cennik-zlota.html');
+  await page.locator('#price-metal-select').selectOption('gold');await page.waitForURL('**/cennik-zlota.html');
   assert.ok(await page.locator('.purity-view').isVisible());assert.equal(await page.locator('.kind-unavailable').count(),2);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.deepEqual(errors,[]);
   await page.close();console.log('PASS disabled gold products, active silver products and no form:',width);
  }
+ const future=await browser.newPage({viewport:{width:390,height:844}});
+ await future.route('**/api/prices',r=>r.fulfill({json:feed,headers:{'access-control-allow-origin':'*'}}));
+ await future.route('**/cennik.html',async route=>{
+  const response=await route.fetch();let html=await response.text();
+  html=html.replace(/(<script id="metal-price-snapshot" type="application\/json">)(.*?)(<\/script>)/s,(_,start,payload,end)=>{
+   const data=JSON.parse(payload);data.views['gold/coins'].comingSoon=false;data.views['gold/bars'].comingSoon=false;
+   data.products.goldCoins=snapshot.products.goldCoins;data.products.goldBars=snapshot.products.goldBars;
+   return start+JSON.stringify(data)+end;
+  });
+  await route.fulfill({response,body:html});
+ });
+ await future.goto(base+'cennik.html');await future.waitForSelector('#price-status[data-state="ready"]');
+ await future.locator('.kind-tabs a[data-kind="coins"]').click();assert.equal(await future.locator('.product-price-row').count(),Math.min(12,snapshot.products.goldCoins.length));
+ await future.locator('.kind-tabs a[data-kind="bars"]').click();assert.equal(await future.locator('.product-price-row').count(),Math.min(12,snapshot.products.goldBars.length));
+ assert.ok(await future.locator('#product-price-list').innerText().then(t=>t.includes('za 1 sztukę')));
+ await future.close();console.log('PASS simulated future gold coins and bars activation without layout changes');
  const page=await browser.newPage({javaScriptEnabled:false});
  await page.goto(base+'monety-zlote.html');assert.ok(await page.locator('.price-coming-soon').isVisible());assert.equal(await page.locator('.product-price-row').count(),0);assert.equal(await page.locator('.reading-section').isVisible(),false);
  await page.goto(base+'sztabki-srebrne.html');assert.ok(await page.locator('.product-price-row').count()>0);

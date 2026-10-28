@@ -48,10 +48,10 @@ const pages = JSON.parse(fs.readFileSync(path.join(root, 'site-manifest.json'), 
       await page.locator('#main-navigation').getByRole('link', { name: 'Cennik skupu', exact: true }).click();
       await page.waitForURL('**/cennik.html');
       assert.equal(await page.locator('[data-price-metal]').getAttribute('data-price-metal'), 'gold');
-      assert.equal(await page.locator('.metal-tabs').isVisible(), true);
-      await page.getByRole('navigation', { name: 'Wybierz metal' }).getByRole('link', { name: 'Srebro', exact: true }).click();
+      assert.equal(await page.locator('#price-metal-select').isVisible(), true);
+      await page.locator('#price-metal-select').selectOption('silver');
       await page.waitForURL('**/cennik-srebra.html');
-      await page.getByRole('navigation', { name: 'Wybierz metal' }).getByRole('link', { name: 'Pallad', exact: true }).click();
+      await page.locator('#price-metal-select').selectOption('palladium');
       await page.waitForURL('**/cennik-palladu.html');
       await page.waitForSelector('#price-status[data-state="ready"]', { state: 'attached' });
       feed.metals.palladium.purities['999'].price = 123.45;
