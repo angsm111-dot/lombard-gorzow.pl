@@ -209,6 +209,17 @@ for view in VIEWS.values():
 calc = SECTIONS['kalkulator'].replace('<h2 id="fee-title">Sprawdź,<br> ile <em>zapłacisz.</em></h2>', '<h1 id="fee-title">Kalkulator opłat lombardu w Gorzowie</h1>')
 # Source may have the original line break without a following space.
 calc = re.sub(r'<h2 id="fee-title">.*?</h2>', '<h1 id="fee-title">Kalkulator opłat lombardu w Gorzowie</h1>', calc)
+# Static examples remain readable and crawlable without JavaScript.
+def example_money(cents):
+    whole, fraction = divmod(cents, 100)
+    return f'{whole:,}'.replace(',', '\u00a0') + f',{fraction:02d} zł'
+
+example_amounts = [100, 200, 300, 500, 700, 1000, 1500, 2000, 3000, 5000, 10000, 20000, 40000, 60000, 100000]
+example_rows = ''.join(
+    '<tr><th scope="row">' + example_money(amount * 100) + '</th><td>' + example_money(amount * 100 * 25 // 1000) + '</td><td>' + example_money(amount * 100 * 50 // 1000) + '</td></tr>'
+    for amount in example_amounts
+)
+calc += '<section class="fee-examples" aria-labelledby="fee-examples-title"><h2 id="fee-examples-title">Przykładowe kwoty i opłaty</h2><p>Porównaj opłaty za 15 i 30 dni. Do spłaty pozostaje wybrana kwota powiększona o podaną opłatę.</p><table><caption>Opłaty dla 15 przykładowych kwot</caption><thead><tr><th scope="col">Kwota</th><th scope="col">15 dni<span>2,5%</span></th><th scope="col">30 dni<span>5%</span></th></tr></thead><tbody>' + example_rows + '</tbody></table><p class="fee-examples-note">Dla kwot od 40 000 zł opłaty do negocjacji. W tabeli podano opłaty według stawek kalkulatora.</p></section>'
 page('kalkulator-oplat.html', 'Kalkulator opłat — 2,5% / 15 dni, 5% / 30 dni | Sezam', 'Sprawdź opłatę i łączną kwotę do spłaty w Lombardzie Sezam Gorzów. Kalkulator: 2,5% za 15 dni lub 5% za 30 dni, od 50 do 100 000 zł.', calc, scripts=('calculator.js',))
 
 contact = SECTIONS['kontakt'].replace('<h2>Masz pytanie?<br> Napisz na <em>WhatsApp.</em></h2>', '<h1>Kontakt — Lombard Sezam Gorzów</h1>')
