@@ -20,7 +20,7 @@ METALS = {
     'palladium': ('palladu', 'Pallad', 'cennik-palladu.html'),
 }
 ROUTES = {'przyjmujemy': 'co-przyjmujemy.html', 'sprzedaz': 'na-sprzedaz.html', 'zloto': 'cennik-zlota.html',
-          'kalkulator': 'kalkulator-oplat.html', 'blog': 'blog.html', 'kontakt': 'kontakt.html',
+          'obraczki': 'obraczki.html', 'kalkulator': 'kalkulator-oplat.html', 'blog': 'blog.html', 'kontakt': 'kontakt.html',
           'wycena': 'kontakt.html#kontakt', 'zasady': 'co-przyjmujemy.html'}
 PAGES = []
 WHATSAPP_WIDGET = '<a class="floating-whatsapp" href="https://wa.me/48601775146" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp — napisz do Lombardu Sezam" title="Napisz na WhatsApp"><span class="floating-whatsapp-label">WhatsApp</span><svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M26 6a13 13 0 0 0-21 15L3 29l8-2A13 13 0 0 0 26 6Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 9c-3 1-2 6 2 10s8 5 10 2l-4-3-2 2c-3-1-5-3-6-6l2-1Z" fill="currentColor"/></svg></a>'
@@ -98,6 +98,9 @@ sales = intro('Na sprzedaż — oferty Lombardu Sezam', 'Przeglądaj aktualne pr
 sales += '<section class="reading-section"><h2>Sprawdź szczegóły przed zakupem</h2><p>Nasze ogłoszenia obejmują różne przedmioty, w tym biżuterię i elektronikę. Oferta zmienia się, dlatego przed przyjazdem na ul. Pocztową 11 w Gorzowie potwierdź dostępność interesującej Cię rzeczy.</p><p>Zapoznaj się z opisem stanu, zestawem akcesoriów i warunkami sprzedaży w ogłoszeniu. Masz pytanie o konkretny przedmiot? Prześlij nam link przez WhatsApp.</p><a class="link" href="kontakt.html">Kontakt z Lombardem Sezam →</a></section>'
 page('na-sprzedaz.html', 'Na sprzedaż — oferty OLX | Lombard Sezam Gorzów', 'Zobacz aktualne oferty Lombardu Sezam w Gorzowie na OLX. Przedmioty, zdjęcia, ceny i szczegóły ogłoszeń w jednym miejscu.', sales)
 
+
+rings = intro('Obrączki na zamówienie w Gorzowie', 'Wykonujemy obrączki w 14 dni, w atrakcyjnej cenie. Wybierzcie swój wzór spośród ponad 100 propozycji na www.obraczkigorzow.pl.') + SECTIONS['obraczki']
+page('obraczki.html', 'Obrączki Gorzów — na zamówienie w 14 dni | Sezam', 'Obrączki na zamówienie w Gorzowie: realizacja w 14 dni i atrakcyjna cena. Ponad 100 wzorów na www.obraczkigorzow.pl. Zapytaj o swoją parę.', rings)
 
 # Each view has a real, crawlable URL. JS progressively enhances the same links.
 PRODUCT_ROUTES = {
