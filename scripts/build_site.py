@@ -99,7 +99,7 @@ sales += '<section class="reading-section"><h2>Sprawdź szczegóły przed zakupe
 page('na-sprzedaz.html', 'Na sprzedaż — oferty OLX | Lombard Sezam Gorzów', 'Zobacz aktualne oferty Lombardu Sezam w Gorzowie na OLX. Przedmioty, zdjęcia, ceny i szczegóły ogłoszeń w jednym miejscu.', sales)
 
 
-rings = intro('Obrączki na zamówienie w Gorzowie', 'Wykonujemy obrączki w 14 dni, w atrakcyjnej cenie. Wybierzcie swój wzór spośród ponad 100 propozycji na www.obraczkigorzow.pl.') + SECTIONS['obraczki']
+rings = SECTIONS['obraczki']
 page('obraczki.html', 'Obrączki Gorzów — na zamówienie w 14 dni | Sezam', 'Obrączki na zamówienie w Gorzowie: realizacja w 14 dni i atrakcyjna cena. Ponad 100 wzorów na www.obraczkigorzow.pl. Zapytaj o swoją parę.', rings)
 
 # Each view has a real, crawlable URL. JS progressively enhances the same links.
